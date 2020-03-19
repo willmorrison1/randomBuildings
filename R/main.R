@@ -5,6 +5,7 @@ library(sp)
 library(maptools)
 library(rgdal)
 
+source("R/functions.R")
 #seed value for random operations
 seedVal <- 2361
 set.seed(seed = seedVal)
@@ -17,11 +18,8 @@ nBuildings <- 40
 #plan area build fraction (lambda_p) (forces building separation and width)
 lambda_p <- 0.3
 
-#building height (normal) distribution
-zVals <- c("mean" = 30, "sd" = 5)
-
-#domain lengths (m)
-DARTdomainDims <- c("X" = 430, "Y" = 430)
+#domain horizontal length in X and Y (m)
+DART_XorY_m <- 430
 
 #DART building size (m) - the size of a DART cube in XYZ.
 #all other building sizes in this code are scaled based on this size
@@ -36,99 +34,31 @@ XYoffset_factor <- 0.4#0.15
 maxBuildRotation <- 45#45
 
 
-
-#go
-#predefine model domain
-nBuildingsXorY <- ceiling(sqrt(nBuildings))
-buildingDistance0 <- seq(0, DARTdomainDims["X"], length.out = nBuildingsXorY)
-buildingDistance <- buildingDistance0[-1] - (diff(buildingDistance0) / 2)
-singleBuildingDistance <- diff(buildingDistance)[1]
-totalArea <- prod(DARTdomainDims)
-#is lambda p the building area relative to all ground (including under buildings)?
-buildingArea <- (lambda_p * totalArea) / nBuildings
-buildingLength <- sqrt(buildingArea)
-x <- y <- buildingDistance
-
-#predefine overlapping plot flag
-overlappingPolys <- TRUE
-while (overlappingPolys) {
-
-  print(seedVal)
-  seedVal <- seedVal + 1
-  set.seed(seed = seedVal)
-  #initiate data frame with building centroid x,y locations
-  outDF <- expand.grid(x = x, y = y)
-  maxX <- max(x)
-  maxY <- max(y)
-  #randomly add x,y coordinate shifts
-  xJitter <- runif(n = nrow(outDF), min = -(singleBuildingDistance * XYoffset_factor) / 2, 
-                   max = (singleBuildingDistance * XYoffset_factor) / 2)
-  yJitter <- runif(n = nrow(outDF), min = -(singleBuildingDistance * XYoffset_factor) / 2, 
-                   max = (singleBuildingDistance * XYoffset_factor) / 2)
-  outDF$x <- outDF$x + xJitter
-  outDF$y <- outDF$y + yJitter
-
-  #add dart bits to columns
-  outDF$objInd <- 0
-  outDF$z <- 0
-
-  #set DART building X, Y size
-  dartBuildXYsize <- (DARTbuildSizeXY * buildingLength) / 2
-  outDF$Xscale <- outDF$Yscale <- dartBuildXYsize
-  #set DART building heights (norm distribution)
-  outDF$Zscale <- rnorm(n = nrow(outDF), mean = zVals["mean"], sd = zVals["sd"])
-  #set DART x and y rotation
-  outDF$Xrot <- outDF$Yrot <- 0
-  #set random rotation north +- 45 deg
-  rotVals_raw <- runif(n = nrow(outDF), min = -maxBuildRotation, max = maxBuildRotation)
-  rotVals_raw[rotVals_raw < 0] <- 360 + rotVals_raw[rotVals_raw < 0]
-  outDF$Zrot <- rotVals_raw
-  #finalise DART data frame
-  outDF <- outDF %>%
-    dplyr::select(objInd, x, y, z, Xscale, Yscale, Zscale, Xrot, Yrot, Zrot)
-
-  #create polygons
-  #*0.5 for gBuffer
-  buffWidth <- (buildingLength / 2)
-  SPoints <- sp::SpatialPoints(outDF[c("x", "y")])
-  spList <- list()
-
-  for (i in seq_along(SPoints)) {
-    spList[[i]] <- gBuffer(SPoints[i], width = buffWidth, quadsegs = 1, capStyle = "SQUARE")
-    spList[[i]] <- maptools::elide(spList[[i]], rotate = outDF$Zrot[i], 
-                                   center = coordinates(SPoints[i]))
-  }
+for(i in seq(25, 150, by = 5)){
+  print(i)
+  buildDistribution <- createBuildingDistribution(nBuildings = i, lambda_p = 0.15, z_mean = 30, z_sd = 5, 
+                                                  DART_XorY_m = 430, DARTbuildSizeXY = 1,
+                                                  XYoffset_factor = 0.2, maxBuildRotation = 45, 
+                                                  seedVal = 2361, maxIters = 200)
   
-  SP <- do.call(bind, spList)
-  LHS <- raster::shift(SP, dx = -DARTdomainDims["X"], dy = 0)
-  topHS <- raster::shift(SP, dx = 0, dy = DARTdomainDims["Y"])
-
-  SP_cycled <- do.call(bind, list(SP, LHS, topHS))
-  area_preAgg <- as.numeric(gArea(SP_cycled))
-  area_postAgg <- as.numeric(gArea(aggregate(SP_cycled)))
-
-  if ((area_preAgg - area_postAgg) < 1e-5) overlappingPolys <- FALSE
+  
+  newDomainExtent <- bbox(buildDistribution$polygons)
+  print(paste("Used seed", seedVal))
+  plot(buildDistribution$polygons, main = paste("Seed:", seedVal - 1))
+  axis(1, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
+  axis(2, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
+  rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"], 
+       ytop = newDomainExtent["y", "max"], lwd = 2)
+  rect(xleft = 0, ybottom = 0, xright = 430, 
+       ytop = 430, lwd = 2, lty = 2)
+  actualPAI <- sum(area(buildDistribution$polygons)) / (newDomainExtent["x", "max"] * newDomainExtent["y", "max"])
+  print(actualPAI)
+  Sys.sleep(1)
 }
 
-SPbbox <- bbox(SP)
-SP_shifted <- raster::shift(SP, dx = -SPbbox["x","min"], dy = -SPbbox["y","min"])
 
-domainExtent <- raster::extent(0, DARTdomainDims["X"], 
-                               0, DARTdomainDims["Y"])
-newDomainExtent <- bbox(SP_shifted)
-print(paste("Used seed", seedVal))
-plot(SP_shifted, main = paste("Seed:", seedVal - 1))
-axis(1, at = seq(-DARTdomainDims["X"], DARTdomainDims["X"], by = 20), cex.axis = 0.7)
-axis(2, at = seq(-DARTdomainDims["Y"], DARTdomainDims["Y"], by = 20), cex.axis = 0.7)
-rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"], 
-     ytop = newDomainExtent["y", "max"], lwd = 2)
-
-actualPAI <- sum(area(SP_shifted)) / (newDomainExtent["x", "max"] * newDomainExtent["y", "max"])
-print(actualPAI)
-stop()
-SPdf <- SpatialPolygonsDataFrame(Sr = SP, data = data.frame("z" = outDF$Zscale))
-unlink(oDir)
-writeOGR(SPdf, dsn = oDir, driver = "ESRI Shapefile", layer = "z", overwrite_layer = TRUE)
+# unlink(oDir)
+# writeOGR(buildDistribution$polygons, dsn = oDir, driver = "ESRI Shapefile", layer = "z", overwrite_layer = TRUE)
 
 # unlink("V:/Tier_processing/hv867657/DARTfiles/fieldRwip_1.txt")
 # writeLines(text = "complete transformation", con = "V:/Tier_processing/hv867657/DARTfiles/fieldRwip_1.txt")
