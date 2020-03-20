@@ -118,13 +118,13 @@ DARTdfData <- buildDistribution$df
 head(DARTdfData)
 ```
 
-    ##   objInd         x        y z   Xscale   Yscale   Zscale Xrot Yrot      Zrot
-    ## 1      0  44.12819 44.69541 0 19.62672 19.62672 27.19785    0    0 352.06237
-    ## 2      0 105.48780 35.44509 0 19.62672 19.62672 21.93710    0    0 342.29444
-    ## 3      0 178.28988 31.05320 0 19.62672 19.62672 33.14919    0    0 346.37849
-    ## 4      0 245.90878 38.94732 0 19.62672 19.62672 30.01500    0    0 325.75891
-    ## 5      0 325.39034 38.32315 0 19.62672 19.62672 22.94304    0    0 338.15283
-    ## 6      0 391.06467 31.43065 0 19.62672 19.62672 35.93876    0    0  21.34085
+    ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot       Zrot
+    ## 1      0 352.6977  44.12819 0 19.62672 19.62672 27.19785    0    0   7.937633
+    ## 2      0 361.9480 105.48780 0 19.62672 19.62672 21.93710    0    0  17.705560
+    ## 3      0 366.3399 178.28988 0 19.62672 19.62672 33.14919    0    0  13.621507
+    ## 4      0 358.4458 245.90878 0 19.62672 19.62672 30.01500    0    0  34.241093
+    ## 5      0 359.0699 325.39034 0 19.62672 19.62672 22.94304    0    0  21.847167
+    ## 6      0 365.9624 391.06467 0 19.62672 19.62672 35.93876    0    0 338.659147
 
 ``` r
 DFfile <- "data/DART_building_field.txt"
@@ -136,7 +136,7 @@ write.table(x = DARTdfData, file = DFfile, sep = " ", col.names = FALSE,
 # Validate across a large range of inputs
 
 ``` r
-samplePerms <- expand.grid(nBuildings = seq(20, 140, by = 40), 
+samplePerms <- expand.grid(nBuildings = seq(20, 100, by = 40), 
                            lambda_p = seq(0.2, 0.8, by = 0.2),
                            DART_XorY_m = seq(200, 1000, by = 400),
                            XYoffset_factor = seq(0, 0.4, by = 0.2),
@@ -144,17 +144,17 @@ samplePerms <- expand.grid(nBuildings = seq(20, 140, by = 40),
 library(foreach)
 ```
 
-    ## Warning: package 'foreach' was built under R version 3.6.3
+    ## Warning: package 'foreach' was built under R version 3.5.3
 
 ``` r
 library(doParallel)
 ```
 
-    ## Warning: package 'doParallel' was built under R version 3.6.3
+    ## Warning: package 'doParallel' was built under R version 3.5.3
 
     ## Loading required package: iterators
 
-    ## Warning: package 'iterators' was built under R version 3.6.3
+    ## Warning: package 'iterators' was built under R version 3.5.3
 
     ## Loading required package: parallel
 
@@ -194,4 +194,4 @@ abline(0, 1, col = "red")
 paste("MAE:", mean(abs(finalPAI - expectedPAI)))
 ```
 
-    ## [1] "MAE: 0.0246344159433772"
+    ## [1] "MAE: 0.0285429243833829"
