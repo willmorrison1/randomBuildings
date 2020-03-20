@@ -46,8 +46,8 @@ rect(xleft = 0, ybottom = 0, xright = 430,
 actualPAI <- sum(area(buildDistribution$polygons)) / (newDomainExtent["x", "max"] * newDomainExtent["y", "max"])
 
 
-unlink(oDir)
-writeOGR(buildDistribution$polygons, dsn = oDir, driver = "ESRI Shapefile", layer = "z", overwrite_layer = TRUE)
+# unlink(oDir)
+# writeOGR(buildDistribution$polygons, dsn = oDir, driver = "ESRI Shapefile", layer = "z", overwrite_layer = TRUE)
 
 # unlink("V:/Tier_processing/hv867657/DARTfiles/fieldRwip_1.txt")
 # writeLines(text = "complete transformation", con = "V:/Tier_processing/hv867657/DARTfiles/fieldRwip_1.txt")
