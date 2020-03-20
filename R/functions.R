@@ -85,12 +85,10 @@ createBuildingDistribution <- function(nBuildings, lambda_p, z_mean, z_sd, DART_
   SPbbox <- bbox(SP)
   SP_shifted <- raster::shift(SP, dx = -SPbbox["x", "min"], dy = -SPbbox["y", "min"])
   SP_shifted <- SpatialPolygonsDataFrame(Sr = SP_shifted, data = data.frame("z" = outDF$Zscale))
-  outDF_shifted <- outDF_DARTcompatible %>%
-    dplyr::mutate(x = x + (SPbbox["y", "min"]),
-                  y = y - SPbbox["x", "min"])
+
   out <- list()
   out$polygons <- SP_shifted
-  out$df <- outDF_shifted
+  out$df <- outDF_DARTcompatible
   out$nIters <- nIters
   out$seed <- seedVal
   

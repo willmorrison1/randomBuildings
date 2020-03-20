@@ -7,16 +7,16 @@ library(rgdal)
 
 source("R/functions.R")
 #seed value for random operations
-seedVal <- 29911
+seedVal <- 2991099
 set.seed(seed = seedVal)
 
 #output Directory for shape file
 oDir <- "C:/PhD/Code/Analysis_Shapefile/Analyze Virtual London/shapefiles"
 
 #total buildings in domain (forces building separation and width)
-nBuildings <- 14
+nBuildings <- 70
 #plan area build fraction (lambda_p) (forces building separation and width)
-lambda_p <- 0.15
+lambda_p <- 0.37
 #domain horizontal length in X and Y (m)
 DART_XorY_m <- 430
 #DART building size (m) - the size of a DART cube in XYZ.
@@ -26,13 +26,13 @@ DARTbuildSizeXY <- 1
 #(multiplicative factor of distance between building centroids)
 #e.g. building centroid distance bD = 10 (m) and XYoffset_factor = 0.5.
 #Buildings will randomly be located at x'= x +- 2.5 m and y' = y +- 2.5 m
-XYoffset_factor <- 0.2
+XYoffset_factor <- 0.35
 #maximum building rotation +- north (deg). use 45 deg for most random (assuming nBuildings is large)
 maxBuildRotation <- 45
 #mean building height (m)
-z_mean = 30
+z_mean <- 35
 #standard deviation of building height (m)
-z_sd = 5
+z_sd <- 10
 
 buildDistribution <- createBuildingDistribution(nBuildings = nBuildings, 
                                                 lambda_p = lambda_p, 
@@ -40,7 +40,7 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
                                                 z_sd = z_sd, 
                                                 DART_XorY_m = DART_XorY_m, 
                                                 DARTbuildSizeXY = DARTbuildSizeXY,
-                                                XYoffset_factor = 1, 
+                                                XYoffset_factor = XYoffset_factor, 
                                                 maxBuildRotation = maxBuildRotation, 
                                                 seedVal = seedVal, 
                                                 maxIters = 200)
