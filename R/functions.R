@@ -51,17 +51,17 @@ createBuildingDistribution <- function(nBuildings, lambda_p, z_mean, z_sd, DART_
     #*0.5 for gBuffer
     buffWidth <- (singleBuildingLength / 2)
     outDF_DARTcompatible <- outDF %>%
-      dplyr::mutate(xNew = y, 
-                    yNew = max(x) - x,
+      dplyr::mutate(xNew = max(y) - y, 
+                    yNew = x,
                     x = xNew, 
                     y = yNew,
                     Zrot = 360 - Zrot) %>%
       dplyr::select(-c(xNew, yNew))
-    SPoints <- sp::SpatialPoints(outDF_DARTcompatible[c("x", "y")])
+    SPoints <- sp::SpatialPoints(outDF[c("x", "y")])
     spList <- list()
     for (i in seq_along(SPoints)) {
       spList[[i]] <- gBuffer(SPoints[i], width = buffWidth, quadsegs = 1, capStyle = "SQUARE")
-      spList[[i]] <- maptools::elide(spList[[i]], rotate = outDF_DARTcompatible$Zrot[i],
+      spList[[i]] <- maptools::elide(spList[[i]], rotate = outDF$Zrot[i],
                                      center = coordinates(SPoints[i]))
     }
     
@@ -85,8 +85,8 @@ createBuildingDistribution <- function(nBuildings, lambda_p, z_mean, z_sd, DART_
   SPbbox <- bbox(SP)
   SP_shifted <- raster::shift(SP, dx = -SPbbox["x", "min"], dy = -SPbbox["y", "min"])
   SP_shifted <- SpatialPolygonsDataFrame(Sr = SP_shifted, data = data.frame("z" = outDF$Zscale))
-  outDF_shifted <- outDF %>%
-    dplyr::mutate(x = x + (SPbbox["y", "min"] * 0.5),
+  outDF_shifted <- outDF_DARTcompatible %>%
+    dplyr::mutate(x = x + (SPbbox["y", "min"]),
                   y = y - SPbbox["x", "min"])
   out <- list()
   out$polygons <- SP_shifted

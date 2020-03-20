@@ -7,7 +7,7 @@ library(rgdal)
 
 source("R/functions.R")
 #seed value for random operations
-seedVal <- 24991111
+seedVal <- 29911
 set.seed(seed = seedVal)
 
 #output Directory for shape file
