@@ -1,5 +1,13 @@
-createBuildingDistribution <- function(nBuildings, lambda_p, z_mean, z_sd, DART_XorY_m, DARTbuildSizeXY, XYoffset_factor, 
-                                       maxBuildRotation, seedVal = floor(runif(1, min = 1, max = 100)), maxIters = 500) {
+createBuildingDistribution <- function(nBuildings, 
+                                       lambda_p,
+                                       z_mean,
+                                       z_sd, 
+                                       DART_XorY_m, 
+                                       DARTbuildSizeXY, 
+                                       XYoffset_factor, 
+                                       maxBuildRotation,
+                                       seedVal = floor(runif(1, min = 1, max = 100)), 
+                                       maxIters = 250) {
   
   #predefine model domain
   nBuildingsXorY <- ceiling(sqrt(nBuildings))
@@ -11,11 +19,12 @@ createBuildingDistribution <- function(nBuildings, lambda_p, z_mean, z_sd, DART_
   singleBuildingArea <- (lambda_p * totalArea) / (length(buildingDistance)^2)
   singleBuildingLength <- sqrt(singleBuildingArea)
   x <- y <- buildingDistance
+  
   #predefine overlapping plot flag
   overlappingPolys <- TRUE
   nIters <- 0
+  
   while (overlappingPolys) {
-    
     seedVal <- seedVal + 1
     set.seed(seed = seedVal)
     #initiate data frame with building centroid x,y locations
@@ -82,10 +91,12 @@ createBuildingDistribution <- function(nBuildings, lambda_p, z_mean, z_sd, DART_
     }
   }
   
+  #remove empty space atedge of domain
   SPbbox <- bbox(SP)
   SP_shifted <- raster::shift(SP, dx = -SPbbox["x", "min"], dy = -SPbbox["y", "min"])
   SP_shifted <- SpatialPolygonsDataFrame(Sr = SP_shifted, data = data.frame("z" = outDF$Zscale))
 
+  #put all in output list
   out <- list()
   out$polygons <- SP_shifted
   out$df <- outDF_DARTcompatible
