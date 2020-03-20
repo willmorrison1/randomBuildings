@@ -80,7 +80,7 @@ polygonData <- buildDistribution$polygons
 #the new domain will be slightly different
 newDomainExtent <- bbox(buildDistribution$polygons)
 
-plot(polygonData, main = paste("Seed:", seedVal - 1))
+plot(polygonData, main = paste("Seed:", seedVal))
 axis(1, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 axis(2, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"], 

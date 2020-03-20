@@ -86,7 +86,7 @@ polygonData <- buildDistribution$polygons
 #the new domain will be slightly different
 newDomainExtent <- bbox(buildDistribution$polygons)
 
-plot(polygonData, main = paste("Seed:", seedVal - 1))
+plot(polygonData, main = paste("Seed:", seedVal))
 axis(1, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 axis(2, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"], 
@@ -144,17 +144,17 @@ samplePerms <- expand.grid(nBuildings = seq(20, 100, by = 40),
 library(foreach)
 ```
 
-    ## Warning: package 'foreach' was built under R version 3.5.3
+    ## Warning: package 'foreach' was built under R version 3.6.3
 
 ``` r
 library(doParallel)
 ```
 
-    ## Warning: package 'doParallel' was built under R version 3.5.3
+    ## Warning: package 'doParallel' was built under R version 3.6.3
 
     ## Loading required package: iterators
 
-    ## Warning: package 'iterators' was built under R version 3.5.3
+    ## Warning: package 'iterators' was built under R version 3.6.3
 
     ## Loading required package: parallel
 
