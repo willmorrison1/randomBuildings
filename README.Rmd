@@ -74,6 +74,12 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
 
 
 # Explore the output
+
+```{r}
+#a list with some data and meta data (in no sane order)
+names(buildDistribution)
+```
+
 ## Polygons
 ```{r}
 polygonData <- buildDistribution$polygons
@@ -109,6 +115,13 @@ write.table(x = DARTdfData, file = DFfile, sep = " ", col.names = FALSE,
             row.names = FALSE, append = TRUE)
 ```
 
+## Write data
+```{r}
+oDir <- getwd()
+oDir_ID <- writebuildDistribution(buildDistribution, oDir)
+list.files(oDir_ID)
+unlink(oDir_ID, recursive = T)
+```
 
 # Validate across a wide range of inputs
 
@@ -138,11 +151,8 @@ out <- foreach(i = 1:nrow(samplePerms), .packages = c("raster", "tidyr", "rgeos"
 stopCluster(cl)
 isFailedSim <- sapply(out, is.null)
 out_filtered <- out[which(!isFailedSim)]
-calcPAI <- function(x) {
-  sum(area(x)) / (bbox(x)["x", "max"] * bbox(x)["y", "max"])
-}
 
-finalPAI <- unlist(lapply(out_filtered, function(x) calcPAI(x$polygons)))
+finalPAI <- unlist(lapply(out_filtered, function(x) x$newPAI))
 expectedPAI <- samplePerms$lambda_p[which(!isFailedSim)]
 nIters <- sapply(out_filtered, function(x) x$nIters)
 plot(expectedPAI, finalPAI, pch = 20)

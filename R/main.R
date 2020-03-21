@@ -11,7 +11,7 @@ seedVal <- 2361
 set.seed(seed = seedVal)
 
 #output Directory for shape file
-oDir <- "C:/PhD/Code/Analysis_Shapefile/Analyze Virtual London/shapefiles"
+oDir <- getwd()
 
 nBuildings <- 50
 lambda_p <- 0.3
@@ -34,7 +34,7 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
                                                 maxIters = 200)
 
 
-newDomainExtent <- bbox(buildDistribution$polygons)
+newDomainExtent <- buildDistribution$domainExtent
 print(paste("Used seed", seedVal))
 plot(buildDistribution$polygons, main = paste("Seed:", seedVal))
 axis(1, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
@@ -43,12 +43,7 @@ rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"],
      ytop = newDomainExtent["y", "max"], lwd = 2)
 rect(xleft = 0, ybottom = 0, xright = 430, 
      ytop = 430, lwd = 2, lty = 2)
-actualPAI <- sum(area(buildDistribution$polygons)) / (newDomainExtent["x", "max"] * newDomainExtent["y", "max"])
-
-
-# unlink(oDir)
-# writeOGR(buildDistribution$polygons, dsn = oDir, driver = "ESRI Shapefile", layer = "z", overwrite_layer = TRUE)
-
-# unlink("V:/Tier_processing/hv867657/DARTfiles/fieldRwip_1.txt")
-# writeLines(text = "complete transformation", con = "V:/Tier_processing/hv867657/DARTfiles/fieldRwip_1.txt")
-# write.table(x = outDF, file = "V:/Tier_processing/hv867657/DARTfiles/fieldRwip_1.txt", sep = " ", col.names = FALSE, row.names = FALSE, append = TRUE)
+actualPAI <- buildDistribution$newPAI
+oDir_ID <- writebuildDistribution(buildDistribution, oDir)
+list.files(oDir_ID)
+unlink(oDir_ID, recursive = T)

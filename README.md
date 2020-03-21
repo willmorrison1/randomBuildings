@@ -11,6 +11,7 @@ William Morrison
   - [Explore the output](#explore-the-output)
       - [Polygons](#polygons)
       - [Data frame](#data-frame)
+      - [Write data](#write-data)
   - [Validate across a wide range of
     inputs](#validate-across-a-wide-range-of-inputs)
 
@@ -79,6 +80,14 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
 
 # Explore the output
 
+``` r
+#a list with some data and meta data (in no sane order)
+names(buildDistribution)
+```
+
+    ## [1] "polygons"     "df"           "nIters"       "seed"         "domainExtent"
+    ## [6] "newPAI"       "params"
+
 ## Polygons
 
 ``` r
@@ -96,7 +105,7 @@ rect(xleft = 0, ybottom = 0, xright = 430,
 legend("bottomleft", legend = c("Original", "Adjusted"), lty = c(2, 1), lwd = 2, ncol = 1, title = "Domain")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 actualPAI <- sum(area(polygonData)) / (newDomainExtent["x", "max"] * newDomainExtent["y", "max"])
@@ -131,6 +140,21 @@ DFfile <- "data/DART_building_field.txt"
 unlink(DFfile)
 write.table(x = DARTdfData, file = DFfile, sep = " ", col.names = FALSE, 
             row.names = FALSE, append = TRUE)
+```
+
+## Write data
+
+``` r
+oDir <- getwd()
+oDir_ID <- writebuildDistribution(buildDistribution, oDir)
+list.files(oDir_ID)
+```
+
+    ## [1] "DART_fields_LO7HB.txt"  "rBldgsParams_LO7HB.yml" "z.dbf"                 
+    ## [4] "z.shp"                  "z.shx"
+
+``` r
+unlink(oDir_ID, recursive = T)
 ```
 
 # Validate across a wide range of inputs
@@ -177,18 +201,15 @@ out <- foreach(i = 1:nrow(samplePerms), .packages = c("raster", "tidyr", "rgeos"
 stopCluster(cl)
 isFailedSim <- sapply(out, is.null)
 out_filtered <- out[which(!isFailedSim)]
-calcPAI <- function(x) {
-  sum(area(x)) / (bbox(x)["x", "max"] * bbox(x)["y", "max"])
-}
 
-finalPAI <- unlist(lapply(out_filtered, function(x) calcPAI(x$polygons)))
+finalPAI <- unlist(lapply(out_filtered, function(x) x$newPAI))
 expectedPAI <- samplePerms$lambda_p[which(!isFailedSim)]
 nIters <- sapply(out_filtered, function(x) x$nIters)
 plot(expectedPAI, finalPAI, pch = 20)
 abline(0, 1, col = "red")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 paste("MAE:", mean(abs(finalPAI - expectedPAI)))

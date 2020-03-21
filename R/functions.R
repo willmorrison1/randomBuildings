@@ -102,6 +102,8 @@ createBuildingDistribution <- function(nBuildings,
   out$df <- outDF_DARTcompatible
   out$nIters <- nIters
   out$seed <- seedVal
+  out$domainExtent <- bbox(SP_shifted)
+  out$newPAI <- sum(area(SP_shifted)) / (out$domainExtent["x", "max"] * out$domainExtent["y", "max"])
   paramsList <- createParamsList(nBuildings = nBuildings, 
                                  lambda_p = lambda_p,
                                  z_mean = z_mean,
@@ -143,6 +145,62 @@ createParamsList <- function(nBuildings,
 }
 
 buildingsFileID <- function(paramsList) {
+  
   #making file ID
+  library(stringi)
+  randomID <- stri_rand_strings(1, 5, pattern = "[A-Z0-9]")
+  out <- list()
+  out$ID <- randomID
+  out$fName <- paste0("rBldgsParams_", randomID, sep = "")
+  
+  return(out)
+  
+}
+
+writeParamsYaml <- function(buildDistribution, oDir, fID) {
+  
+  library(yaml)
+  oFile <- file.path(oDir, paste0(fID$fName, ".yml"))
+  if (file.exists(oFile)) stop(paste(oFile, "exists."))
+  oList <- list(buildDistribution$params)
+  names(oList) <- fID$ID
+  yaml::write_yaml(oList, oFile)
+}
+
+
+writeShp <- function(buildDistribution, oDir, fID) {
+  
+  oDir_shp <- file.path(oDir, fID$ID)
+  
+  writeOGR(buildDistribution$polygons, dsn = oDir_shp, 
+           driver = "ESRI Shapefile", layer = "z", 
+           overwrite_layer = TRUE)
+  
+  
+}
+
+writeDARTdf <- function(buildDistribution, oDir, fID) {
+  
+  oDir_df <- file.path(oDir, fID$ID)
+  oFile_df <- file.path(oDir_df, paste0("DART_fields_", fID$ID, ".txt", sep = ""))
+  writeLines(text = "complete transformation", 
+             con = oFile_df)
+  write.table(x = buildDistribution$df, 
+              file = oFile_df, 
+              sep = " ", 
+              col.names = FALSE, 
+              row.names = FALSE, 
+              append = TRUE)
+}
+
+writebuildDistribution <- function(buildDistribution, oDir) {
+  
+  fID <- buildingsFileID(buildDistribution$params) 
+  oDir_full <- file.path(oDir, fID$ID)
+  dir.create(oDir_full)
+  writeParamsYaml(buildDistribution, oDir_full, fID)
+  writeShp(buildDistribution, oDir, fID)
+  writeDARTdf(buildDistribution, oDir, fID)
+  return(oDir_full)
   
 }
