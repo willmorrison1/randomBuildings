@@ -3,7 +3,7 @@ createBuildingDistribution <- function(nBuildings,
                                        z_mean,
                                        z_sd, 
                                        DART_XorY_m, 
-                                       DARTbuildSizeXY, 
+                                       DARTbuildSizeXYZ, 
                                        XYoffset_factor, 
                                        maxBuildRotation,
                                        seedVal = floor(runif(1, min = 1, max = 100)), 
@@ -42,10 +42,9 @@ createBuildingDistribution <- function(nBuildings,
     outDF$z <- 0
     
     #set DART building X, Y size
-    dartBuildXYsize <- (DARTbuildSizeXY * singleBuildingLength) / 2
-    outDF$Xscale <- outDF$Yscale <- dartBuildXYsize
+    outDF$Xscale <- outDF$Yscale <- singleBuildingLength / DARTbuildSizeXYZ
     #set DART building heights (norm distribution)
-    outDF$Zscale <- rnorm(n = nrow(outDF), mean = z_mean, sd = z_sd)
+    outDF$Zscale <- rnorm(n = nrow(outDF), mean = z_mean, sd = z_sd) / DARTbuildSizeXYZ
     #set DART x and y rotation
     outDF$Xrot <- outDF$Yrot <- 0
     #set random rotation north +- 45 deg
@@ -94,7 +93,7 @@ createBuildingDistribution <- function(nBuildings,
   #remove empty space atedge of domain
   SPbbox <- bbox(SP)
   SP_shifted <- raster::shift(SP, dx = -SPbbox["x", "min"], dy = -SPbbox["y", "min"])
-  SP_shifted <- SpatialPolygonsDataFrame(Sr = SP_shifted, data = data.frame("z" = outDF$Zscale))
+  SP_shifted <- SpatialPolygonsDataFrame(Sr = SP_shifted, data = data.frame("z" = outDF$Zscale * DARTbuildSizeXYZ))
   
   #put all in output list
   out <- list()
@@ -109,7 +108,7 @@ createBuildingDistribution <- function(nBuildings,
                                  z_mean = z_mean,
                                  z_sd = z_sd, 
                                  DART_XorY_m = DART_XorY_m, 
-                                 DARTbuildSizeXY = DARTbuildSizeXY, 
+                                 DARTbuildSizeXYZ = DARTbuildSizeXYZ, 
                                  XYoffset_factor = XYoffset_factor, 
                                  maxBuildRotation = maxBuildRotation,
                                  seedVal = seedVal, 
@@ -123,7 +122,7 @@ createParamsList <- function(nBuildings,
                              z_mean,
                              z_sd, 
                              DART_XorY_m, 
-                             DARTbuildSizeXY, 
+                             DARTbuildSizeXYZ, 
                              XYoffset_factor, 
                              maxBuildRotation,
                              seedVal = floor(runif(1, min = 1, max = 100)), 
@@ -135,7 +134,7 @@ createParamsList <- function(nBuildings,
   out$z_mean <- z_mean
   out$z_sd <- z_sd
   out$DART_XorY_m <- DART_XorY_m
-  out$DARTbuildSizeXY <- DARTbuildSizeXY
+  out$DARTbuildSizeXYZ <- DARTbuildSizeXYZ
   out$XYoffset_factor <- XYoffset_factor
   out$maxBuildRotation <- maxBuildRotation
   out$seedVal <- seedVal
