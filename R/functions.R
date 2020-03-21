@@ -95,13 +95,54 @@ createBuildingDistribution <- function(nBuildings,
   SPbbox <- bbox(SP)
   SP_shifted <- raster::shift(SP, dx = -SPbbox["x", "min"], dy = -SPbbox["y", "min"])
   SP_shifted <- SpatialPolygonsDataFrame(Sr = SP_shifted, data = data.frame("z" = outDF$Zscale))
-
+  
   #put all in output list
   out <- list()
   out$polygons <- SP_shifted
   out$df <- outDF_DARTcompatible
   out$nIters <- nIters
   out$seed <- seedVal
+  paramsList <- createParamsList(nBuildings = nBuildings, 
+                                 lambda_p = lambda_p,
+                                 z_mean = z_mean,
+                                 z_sd = z_sd, 
+                                 DART_XorY_m = DART_XorY_m, 
+                                 DARTbuildSizeXY = DARTbuildSizeXY, 
+                                 XYoffset_factor = XYoffset_factor, 
+                                 maxBuildRotation = maxBuildRotation,
+                                 seedVal = seedVal, 
+                                 maxIters = maxIters)
+  out$params <- paramsList
+  return(out)
+}
+
+createParamsList <- function(nBuildings, 
+                             lambda_p,
+                             z_mean,
+                             z_sd, 
+                             DART_XorY_m, 
+                             DARTbuildSizeXY, 
+                             XYoffset_factor, 
+                             maxBuildRotation,
+                             seedVal = floor(runif(1, min = 1, max = 100)), 
+                             maxIters = 250) {
+  
+  out <- list()
+  out$nBuildings <- nBuildings
+  out$lambda_p <- lambda_p
+  out$z_mean <- z_mean
+  out$z_sd <- z_sd
+  out$DART_XorY_m <- DART_XorY_m
+  out$DARTbuildSizeXY <- DARTbuildSizeXY
+  out$XYoffset_factor <- XYoffset_factor
+  out$maxBuildRotation <- maxBuildRotation
+  out$seedVal <- seedVal
+  out$maxIters <- maxIters
   
   return(out)
+}
+
+buildingsFileID <- function(paramsList) {
+  #making file ID
+  
 }
