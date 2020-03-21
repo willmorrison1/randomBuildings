@@ -40,7 +40,6 @@ createBuildingDistribution <- function(nBuildings,
     #add dart bits to columns
     outDF$objInd <- 0
     outDF$z <- 0
-    
     #set DART building X, Y size
     outDF$Xscale <- outDF$Yscale <- singleBuildingLength / DARTbuildSizeXYZ
     #set DART building heights (norm distribution)
@@ -198,7 +197,6 @@ writeDARTdf <- function(buildDistribution, oDir, fID) {
 }
 
 writebuildDistribution <- function(buildDistribution, oDir, fID = NULL) {
-  
   fID <- buildingsFileID(fID = fID) 
   oDir_full <- file.path(oDir, fID$ID)
   dir.create(oDir_full)

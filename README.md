@@ -17,9 +17,10 @@ William Morrison
 
 # Summary
 
-Create a simple distribution of buildings as shape files and DART
-building field. Buildings have definable square plan area, normally
-distributed heights and random rotation.
+A quick functon to create a simple distribution of buildings in ESRI
+shape file and Discrete Anisotropic Radiative Transfer (DART) building
+field format. Adjust domain area, and building: plan area, height and
+rotation.
 
 # Load packages and source the function
 
@@ -47,7 +48,7 @@ lambda_p <- 0.3
 DART_XorY_m <- 430
 #DART building size (m) - the size of a DART cube in XYZ.
 #all other building sizes in this code are scaled based on this size
-DARTbuildSizeXY <- 1
+DARTbuildSizeXYZ <- 2
 #in XY coordinates, maximum spread of a building centroid from its regular grid location
 #(multiplicative factor of distance between building centroids)
 #e.g. building centroid distance bD = 10 (m) and XYoffset_factor = 0.5.
@@ -57,9 +58,9 @@ XYoffset_factor <- 0.25
 maxBuildRotation <- 45
 #building heights, to calculate a normal distribution of heights across all buildings
 #mean building height (m)
-z_mean = 30
+z_mean <- 30
 #standard deviation of building height (m)
-z_sd = 5
+z_sd <- 5
 ```
 
 # Run the function
@@ -70,7 +71,7 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
                                                 z_mean = z_mean, 
                                                 z_sd = z_sd, 
                                                 DART_XorY_m = DART_XorY_m, 
-                                                DARTbuildSizeXY = DARTbuildSizeXY,
+                                                DARTbuildSizeXYZ = DARTbuildSizeXYZ,
                                                 XYoffset_factor = XYoffset_factor, 
                                                 maxBuildRotation = maxBuildRotation, 
                                                 seedVal = seedVal)
@@ -112,12 +113,6 @@ print(paste("desired PAI:",lambda_p, "actual PAI:", actualPAI))
 
     ## [1] "desired PAI: 0.3 actual PAI: 0.316696348161596"
 
-``` r
-polyFile <- "data/samplePoly"
-
-writeOGR(obj = polygonData, dsn = polyFile, driver = "ESRI Shapefile", layer = "z", overwrite_layer = TRUE)
-```
-
 ## Data frame
 
 ``` r
@@ -126,19 +121,25 @@ head(DARTdfData)
 ```
 
     ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot       Zrot
-    ## 1      0 352.6977  44.12819 0 39.25345 39.25345 27.19785    0    0   7.937633
-    ## 2      0 361.9480 105.48780 0 39.25345 39.25345 21.93710    0    0  17.705560
-    ## 3      0 366.3399 178.28988 0 39.25345 39.25345 33.14919    0    0  13.621507
-    ## 4      0 358.4458 245.90878 0 39.25345 39.25345 30.01500    0    0  34.241093
-    ## 5      0 359.0699 325.39034 0 39.25345 39.25345 22.94304    0    0  21.847167
-    ## 6      0 365.9624 391.06467 0 39.25345 39.25345 35.93876    0    0 338.659147
+    ## 1      0 352.6977  44.12819 0 19.62672 19.62672 13.59893    0    0   7.937633
+    ## 2      0 361.9480 105.48780 0 19.62672 19.62672 10.96855    0    0  17.705560
+    ## 3      0 366.3399 178.28988 0 19.62672 19.62672 16.57459    0    0  13.621507
+    ## 4      0 358.4458 245.90878 0 19.62672 19.62672 15.00750    0    0  34.241093
+    ## 5      0 359.0699 325.39034 0 19.62672 19.62672 11.47152    0    0  21.847167
+    ## 6      0 365.9624 391.06467 0 19.62672 19.62672 17.96938    0    0 338.659147
 
 ## Write data
 
 ``` r
 oDir <- getwd()
+unlink("sampleData", recursive = TRUE)
 #set fID to give manual file ID, else will give random string
 oDir_ID <- writebuildDistribution(buildDistribution, oDir, fID = "sampleData")
+```
+
+    ## Warning: package 'yaml' was built under R version 3.5.3
+
+``` r
 list.files(oDir_ID)
 ```
 
@@ -149,30 +150,31 @@ list.files(oDir_ID)
 # Validate across a wide range of inputs
 
 ``` r
-samplePerms <- expand.grid(nBuildings = seq(20, 100, by = 40), 
+samplePerms <- expand.grid(nBuildings = seq(20, 100, by = 40),
                            lambda_p = seq(0.2, 0.8, by = 0.2),
                            DART_XorY_m = seq(200, 1000, by = 400),
                            XYoffset_factor = seq(0, 0.4, by = 0.2),
                            maxBuildRotation = c(0, 45))
+
 library(foreach)
 ```
 
-    ## Warning: package 'foreach' was built under R version 3.6.3
+    ## Warning: package 'foreach' was built under R version 3.5.3
 
 ``` r
 library(doParallel)
 ```
 
-    ## Warning: package 'doParallel' was built under R version 3.6.3
+    ## Warning: package 'doParallel' was built under R version 3.5.3
 
     ## Loading required package: iterators
 
-    ## Warning: package 'iterators' was built under R version 3.6.3
+    ## Warning: package 'iterators' was built under R version 3.5.3
 
     ## Loading required package: parallel
 
 ``` r
-nCores <- 6
+nCores <- 4
 cl <- parallel::makeCluster(nCores)
 doParallel::registerDoParallel(cl)
 out <- foreach(i = 1:nrow(samplePerms), .packages = c("raster", "tidyr", "rgeos")) %dopar% {
@@ -181,7 +183,7 @@ out <- foreach(i = 1:nrow(samplePerms), .packages = c("raster", "tidyr", "rgeos"
                              z_mean = z_mean, 
                              z_sd = z_sd, 
                              DART_XorY_m = samplePerms$DART_XorY_m[i], 
-                             DARTbuildSizeXY = DARTbuildSizeXY,
+                             DARTbuildSizeXYZ = DARTbuildSizeXYZ,
                              XYoffset_factor = samplePerms$XYoffset_factor[i], 
                              maxBuildRotation = samplePerms$maxBuildRotation[i], 
                              seedVal = seedVal, maxIters = 50)

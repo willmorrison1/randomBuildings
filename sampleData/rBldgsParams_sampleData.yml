@@ -4,7 +4,7 @@ sampleData:
   z_mean: 30.0
   z_sd: 5.0
   DART_XorY_m: 430.0
-  DARTbuildSizeXYZ: 1.0
+  DARTbuildSizeXYZ: 2.0
   XYoffset_factor: 0.25
   maxBuildRotation: 45.0
   seedVal: 2362.0

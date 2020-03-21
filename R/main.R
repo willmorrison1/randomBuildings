@@ -16,7 +16,7 @@ oDir <- getwd()
 nBuildings <- 50
 lambda_p <- 0.3
 DART_XorY_m <- 430
-DARTbuildSizeXY <- 1
+DARTbuildSizeXYZ <- 2
 XYoffset_factor <- 0.5
 maxBuildRotation <- 45
 z_mean <- 30
@@ -27,7 +27,7 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
                                                 z_mean = z_mean, 
                                                 z_sd = z_sd, 
                                                 DART_XorY_m = DART_XorY_m, 
-                                                DARTbuildSizeXY = DARTbuildSizeXY,
+                                                DARTbuildSizeXYZ = DARTbuildSizeXYZ,
                                                 XYoffset_factor = XYoffset_factor,
                                                 maxBuildRotation = maxBuildRotation, 
                                                 seedVal = seedVal, 
@@ -46,4 +46,4 @@ rect(xleft = 0, ybottom = 0, xright = 430,
 actualPAI <- buildDistribution$newPAI
 oDir_ID <- writebuildDistribution(buildDistribution, oDir)
 list.files(oDir_ID)
-unlink(oDir_ID, recursive = T)
+unlink(oDir_ID, recursive = TRUE)
