@@ -126,34 +126,25 @@ head(DARTdfData)
 ```
 
     ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot       Zrot
-    ## 1      0 352.6977  44.12819 0 19.62672 19.62672 27.19785    0    0   7.937633
-    ## 2      0 361.9480 105.48780 0 19.62672 19.62672 21.93710    0    0  17.705560
-    ## 3      0 366.3399 178.28988 0 19.62672 19.62672 33.14919    0    0  13.621507
-    ## 4      0 358.4458 245.90878 0 19.62672 19.62672 30.01500    0    0  34.241093
-    ## 5      0 359.0699 325.39034 0 19.62672 19.62672 22.94304    0    0  21.847167
-    ## 6      0 365.9624 391.06467 0 19.62672 19.62672 35.93876    0    0 338.659147
-
-``` r
-DFfile <- "data/DART_building_field.txt"
-unlink(DFfile)
-write.table(x = DARTdfData, file = DFfile, sep = " ", col.names = FALSE, 
-            row.names = FALSE, append = TRUE)
-```
+    ## 1      0 352.6977  44.12819 0 39.25345 39.25345 27.19785    0    0   7.937633
+    ## 2      0 361.9480 105.48780 0 39.25345 39.25345 21.93710    0    0  17.705560
+    ## 3      0 366.3399 178.28988 0 39.25345 39.25345 33.14919    0    0  13.621507
+    ## 4      0 358.4458 245.90878 0 39.25345 39.25345 30.01500    0    0  34.241093
+    ## 5      0 359.0699 325.39034 0 39.25345 39.25345 22.94304    0    0  21.847167
+    ## 6      0 365.9624 391.06467 0 39.25345 39.25345 35.93876    0    0 338.659147
 
 ## Write data
 
 ``` r
 oDir <- getwd()
-oDir_ID <- writebuildDistribution(buildDistribution, oDir)
+#set fID to give manual file ID, else will give random string
+oDir_ID <- writebuildDistribution(buildDistribution, oDir, fID = "sampleData")
 list.files(oDir_ID)
 ```
 
-    ## [1] "DART_fields_LO7HB.txt"  "rBldgsParams_LO7HB.yml" "z.dbf"                 
-    ## [4] "z.shp"                  "z.shx"
-
-``` r
-unlink(oDir_ID, recursive = T)
-```
+    ## [1] "DART_fields_sampleData.txt"  "rBldgsParams_sampleData.yml"
+    ## [3] "z.dbf"                       "z.shp"                      
+    ## [5] "z.shx"
 
 # Validate across a wide range of inputs
 

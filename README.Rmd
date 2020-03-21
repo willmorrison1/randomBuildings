@@ -109,18 +109,14 @@ writeOGR(obj = polygonData, dsn = polyFile, driver = "ESRI Shapefile", layer = "
 ```{r}
 DARTdfData <- buildDistribution$df
 head(DARTdfData)
-DFfile <- "data/DART_building_field.txt"
-unlink(DFfile)
-write.table(x = DARTdfData, file = DFfile, sep = " ", col.names = FALSE, 
-            row.names = FALSE, append = TRUE)
 ```
 
 ## Write data
 ```{r}
-oDir <- getwd()
-oDir_ID <- writebuildDistribution(buildDistribution, oDir)
+oDir <- file.path(getwd(), "data")
+#set fID to give manual file ID, else will give random string
+oDir_ID <- writebuildDistribution(buildDistribution, oDir, fID = "sampleData")
 list.files(oDir_ID)
-unlink(oDir_ID, recursive = T)
 ```
 
 # Validate across a wide range of inputs

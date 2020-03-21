@@ -143,14 +143,19 @@ createParamsList <- function(nBuildings,
   return(out)
 }
 
-buildingsFileID <- function(paramsList) {
+buildingsFileID_Namestr <- function(fIDstr) {
+  paste0("rBldgsParams_", fIDstr, sep = "")
+}
+
+buildingsFileID <- function(fID = NULL) {
   
+  if (!is.null(fID)) return(list("ID" = fID, "fName" = buildingsFileID_Namestr(fID)))
   #making file ID
   library(stringi)
   randomID <- stri_rand_strings(1, 5, pattern = "[A-Z0-9]")
   out <- list()
   out$ID <- randomID
-  out$fName <- paste0("rBldgsParams_", randomID, sep = "")
+  out$fName <- buildingsFileID_Namestr(randomID)
   
   return(out)
   
@@ -192,9 +197,9 @@ writeDARTdf <- function(buildDistribution, oDir, fID) {
               append = TRUE)
 }
 
-writebuildDistribution <- function(buildDistribution, oDir) {
+writebuildDistribution <- function(buildDistribution, oDir, fID = NULL) {
   
-  fID <- buildingsFileID(buildDistribution$params) 
+  fID <- buildingsFileID(fID = fID) 
   oDir_full <- file.path(oDir, fID$ID)
   dir.create(oDir_full)
   writeParamsYaml(buildDistribution, oDir_full, fID)
