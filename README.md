@@ -11,8 +11,8 @@ William Morrison
   - [Explore the output](#explore-the-output)
       - [Polygons](#polygons)
       - [Data frame](#data-frame)
-  - [Validate across a large range of
-    inputs](#validate-across-a-large-range-of-inputs)
+  - [Validate across a wide range of
+    inputs](#validate-across-a-wide-range-of-inputs)
 
 # Summary
 
@@ -133,7 +133,7 @@ write.table(x = DARTdfData, file = DFfile, sep = " ", col.names = FALSE,
             row.names = FALSE, append = TRUE)
 ```
 
-# Validate across a large range of inputs
+# Validate across a wide range of inputs
 
 ``` r
 samplePerms <- expand.grid(nBuildings = seq(20, 100, by = 40), 

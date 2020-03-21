@@ -110,7 +110,7 @@ write.table(x = DARTdfData, file = DFfile, sep = " ", col.names = FALSE,
 ```
 
 
-# Validate across a large range of inputs
+# Validate across a wide range of inputs
 
 ```{r}
 samplePerms <- expand.grid(nBuildings = seq(20, 100, by = 40), 
