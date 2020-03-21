@@ -17,11 +17,9 @@ William Morrison
 
 # Summary
 
-Create a simple distribution of buildings. Buildings have square plan
-area and normally distributed heights. The rotation of buildings can be
-defined. The output allows saving as data frame (centroids of buildings)
-and polygon shape file (building plan with height statistics). This
-document outlines the general R usage.
+Create a simple distribution of buildings as shape files and DART
+building field. Buildings have definable square plan area, normally
+distributed heights and random rotation.
 
 # Load packages and source the function
 
