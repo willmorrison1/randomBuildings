@@ -150,7 +150,6 @@ buildingsFileID_Namestr <- function(fIDstr) {
 }
 
 buildingsFileID <- function(fID = NULL) {
-  browser()
   if (!is.null(fID)) return(list("ID" = fID, "fName" = buildingsFileID_Namestr(fID)))
   #making file ID
   library(stringi)
