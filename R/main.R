@@ -47,3 +47,5 @@ actualPAI <- buildDistribution$newPAI
 oDir_ID <- writebuildDistribution(buildDistribution, oDir)
 list.files(oDir_ID)
 unlink(oDir_ID, recursive = TRUE)
+writebuildDistribution(buildDistribution = buildDistribution, oDir = oDir)
+
