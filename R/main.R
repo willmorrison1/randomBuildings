@@ -7,17 +7,17 @@ library(rgdal)
 
 source("R/functions.R")
 #seed value for random operations
-seedVal <- 2361
+seedVal <- 2365
 set.seed(seed = seedVal)
 
 #output Directory for shape file
 oDir <- getwd()
 
-nBuildings <- 50
-lambda_p <- 0.3
-DART_XorY_m <- 430
+nBuildings <- 175
+lambda_p <- 0.37
+DART_XorY_m <- 500
 DARTbuildSizeXYZ <- 2
-XYoffset_factor <- 0.5
+XYoffset_factor <- 0.45
 maxBuildRotation <- 45
 z_mean <- 30
 z_sd <- 5
@@ -41,8 +41,8 @@ axis(1, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 axis(2, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"], 
      ytop = newDomainExtent["y", "max"], lwd = 2)
-rect(xleft = 0, ybottom = 0, xright = 430, 
-     ytop = 430, lwd = 2, lty = 2)
+rect(xleft = 0, ybottom = 0, xright = DART_XorY_m, 
+     ytop = DART_XorY_m, lwd = 2, lty = 2)
 actualPAI <- buildDistribution$newPAI
 oDir_ID <- writebuildDistribution(buildDistribution, oDir)
 list.files(oDir_ID)

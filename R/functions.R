@@ -26,12 +26,13 @@ createBuildingDistribution <- function(nBuildings,
   
   while (overlappingPolys) {
     seedVal <- seedVal + 1
-    set.seed(seed = seedVal)
     #initiate data frame with building centroid x,y locations
     outDF <- expand.grid(x = x, y = y)
     #randomly add x,y coordinate shifts
+    set.seed(seed = seedVal)
     xJitter <- runif(n = nrow(outDF), min = -(singleBuildingDistance * XYoffset_factor) / 2, 
                      max = (singleBuildingDistance * XYoffset_factor) / 2)
+    set.seed(seed = seedVal)
     yJitter <- runif(n = nrow(outDF), min = -(singleBuildingDistance * XYoffset_factor) / 2, 
                      max = (singleBuildingDistance * XYoffset_factor) / 2)
     outDF$x <- outDF$x + xJitter
@@ -43,10 +44,12 @@ createBuildingDistribution <- function(nBuildings,
     #set DART building X, Y size
     outDF$Xscale <- outDF$Yscale <- singleBuildingLength / DARTbuildSizeXYZ
     #set DART building heights (norm distribution)
+    set.seed(seed = seedVal)
     outDF$Zscale <- rnorm(n = nrow(outDF), mean = z_mean, sd = z_sd) / DARTbuildSizeXYZ
     #set DART x and y rotation
     outDF$Xrot <- outDF$Yrot <- 0
     #set random rotation north +- 45 deg
+    set.seed(seed = seedVal)
     rotVals_raw <- runif(n = nrow(outDF), min = -maxBuildRotation, max = maxBuildRotation)
     rotVals_raw[rotVals_raw < 0] <- 360 + rotVals_raw[rotVals_raw < 0]
     outDF$Zrot <- rotVals_raw

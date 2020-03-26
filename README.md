@@ -111,7 +111,7 @@ actualPAI <- sum(area(polygonData)) / (newDomainExtent["x", "max"] * newDomainEx
 print(paste("desired PAI:",lambda_p, "actual PAI:", actualPAI))
 ```
 
-    ## [1] "desired PAI: 0.3 actual PAI: 0.316696348161596"
+    ## [1] "desired PAI: 0.3 actual PAI: 0.306258745518674"
 
 ## Data frame
 
@@ -121,12 +121,12 @@ head(DARTdfData)
 ```
 
     ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot       Zrot
-    ## 1      0 352.6977  44.12819 0 19.62672 19.62672 13.59893    0    0   7.937633
-    ## 2      0 361.9480 105.48780 0 19.62672 19.62672 10.96855    0    0  17.705560
-    ## 3      0 366.3399 178.28988 0 19.62672 19.62672 16.57459    0    0  13.621507
-    ## 4      0 358.4458 245.90878 0 19.62672 19.62672 15.00750    0    0  34.241093
-    ## 5      0 359.0699 325.39034 0 19.62672 19.62672 11.47152    0    0  21.847167
-    ## 6      0 365.9624 391.06467 0 19.62672 19.62672 17.96938    0    0 338.659147
+    ## 1      0 358.6264  44.12819 0 19.62672 19.62672 19.46556    0    0 318.332834
+    ## 2      0 368.9335 105.48780 0 19.62672 19.62672 14.69256    0    0  10.107818
+    ## 3      0 367.7981 178.28988 0 19.62672 19.62672 16.04018    0    0   4.404305
+    ## 4      0 371.8458 245.90878 0 19.62672 19.62672 21.80902    0    0  24.737295
+    ## 5      0 364.0309 325.39034 0 19.62672 19.62672 15.69572    0    0 345.481068
+    ## 6      0 370.0233 391.06467 0 19.62672 19.62672 18.43375    0    0  15.582118
 
 ## Write data
 
@@ -135,11 +135,6 @@ oDir <- getwd()
 unlink("sampleData", recursive = TRUE)
 #set fID to give manual file ID, else will give random string
 oDir_ID <- writebuildDistribution(buildDistribution, oDir, fID = "sampleData")
-```
-
-    ## Warning: package 'yaml' was built under R version 3.5.3
-
-``` r
 list.files(oDir_ID)
 ```
 
@@ -159,17 +154,17 @@ samplePerms <- expand.grid(nBuildings = seq(20, 100, by = 40),
 library(foreach)
 ```
 
-    ## Warning: package 'foreach' was built under R version 3.5.3
+    ## Warning: package 'foreach' was built under R version 3.6.3
 
 ``` r
 library(doParallel)
 ```
 
-    ## Warning: package 'doParallel' was built under R version 3.5.3
+    ## Warning: package 'doParallel' was built under R version 3.6.3
 
     ## Loading required package: iterators
 
-    ## Warning: package 'iterators' was built under R version 3.5.3
+    ## Warning: package 'iterators' was built under R version 3.6.3
 
     ## Loading required package: parallel
 
@@ -206,4 +201,4 @@ abline(0, 1, col = "red")
 paste("MAE:", mean(abs(finalPAI - expectedPAI)))
 ```
 
-    ## [1] "MAE: 0.0285429243833829"
+    ## [1] "MAE: 0.0271638994384761"
