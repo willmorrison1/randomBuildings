@@ -84,23 +84,22 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
 names(buildDistribution)
 ```
 
-    ## [1] "polygons"     "df"           "nIters"       "seed"         "domainExtent"
-    ## [6] "newPAI"       "params"
+    ## [1] "polygons" "df"       "params"
 
 ## Polygons
 
 ``` r
 polygonData <- buildDistribution$polygons
 #the new domain will be slightly different
-newDomainExtent <- bbox(buildDistribution$polygons)
+newDomainExtent <- buildDistribution$params$domainExtent
 
 plot(polygonData, main = paste("Seed:", seedVal))
 axis(1, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 axis(2, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"], 
      ytop = newDomainExtent["y", "max"], lwd = 2)
-rect(xleft = 0, ybottom = 0, xright = 430, 
-     ytop = 430, lwd = 2, lty = 2)
+rect(xleft = 0, ybottom = 0, xright = buildDistribution$params$DART_XorY_m, 
+     ytop = buildDistribution$params$DART_XorY_m, lwd = 2, lty = 2)
 legend("bottomleft", legend = c("Original", "Adjusted"), lty = c(2, 1), lwd = 2, ncol = 1, title = "Domain")
 ```
 
@@ -111,7 +110,7 @@ actualPAI <- sum(area(polygonData)) / (newDomainExtent["x", "max"] * newDomainEx
 print(paste("desired PAI:",lambda_p, "actual PAI:", actualPAI))
 ```
 
-    ## [1] "desired PAI: 0.3 actual PAI: 0.306258745518674"
+    ## [1] "desired PAI: 0.3 actual PAI: 0.316214074630423"
 
 ## Data frame
 
@@ -120,13 +119,13 @@ DARTdfData <- buildDistribution$df
 head(DARTdfData)
 ```
 
-    ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot       Zrot
-    ## 1      0 358.6264  44.12819 0 19.62672 19.62672 19.46556    0    0 318.332834
-    ## 2      0 368.9335 105.48780 0 19.62672 19.62672 14.69256    0    0  10.107818
-    ## 3      0 367.7981 178.28988 0 19.62672 19.62672 16.04018    0    0   4.404305
-    ## 4      0 371.8458 245.90878 0 19.62672 19.62672 21.80902    0    0  24.737295
-    ## 5      0 364.0309 325.39034 0 19.62672 19.62672 15.69572    0    0 345.481068
-    ## 6      0 370.0233 391.06467 0 19.62672 19.62672 18.43375    0    0  15.582118
+    ##   objInd        x        y z   Xscale   Yscale   Zscale Xrot Yrot       Zrot
+    ## 1      0 362.9796  35.8949 0 19.62672 19.62672 15.02153    0    0 359.690732
+    ## 2      0 366.1377 104.4035 0 19.62672 19.62672 14.29025    0    0  15.554447
+    ## 3      0 365.0435 177.1644 0 19.62672 19.62672 13.57421    0    0  10.058062
+    ## 4      0 366.7487 247.1258 0 19.62672 19.62672 13.63854    0    0  18.623646
+    ## 5      0 366.9071 318.6341 0 19.62672 19.62672 15.38805    0    0  19.419188
+    ## 6      0 363.6416 393.5663 0 19.62672 19.62672 10.49638    0    0   3.015825
 
 ## Write data
 
@@ -135,6 +134,11 @@ oDir <- getwd()
 unlink("sampleData", recursive = TRUE)
 #set fID to give manual file ID, else will give random string
 oDir_ID <- writebuildDistribution(buildDistribution, oDir, fID = "sampleData")
+```
+
+    ## Warning: package 'yaml' was built under R version 3.5.3
+
+``` r
 list.files(oDir_ID)
 ```
 
@@ -154,17 +158,17 @@ samplePerms <- expand.grid(nBuildings = seq(20, 100, by = 40),
 library(foreach)
 ```
 
-    ## Warning: package 'foreach' was built under R version 3.6.3
+    ## Warning: package 'foreach' was built under R version 3.5.3
 
 ``` r
 library(doParallel)
 ```
 
-    ## Warning: package 'doParallel' was built under R version 3.6.3
+    ## Warning: package 'doParallel' was built under R version 3.5.3
 
     ## Loading required package: iterators
 
-    ## Warning: package 'iterators' was built under R version 3.6.3
+    ## Warning: package 'iterators' was built under R version 3.5.3
 
     ## Loading required package: parallel
 
@@ -188,9 +192,9 @@ stopCluster(cl)
 isFailedSim <- sapply(out, is.null)
 out_filtered <- out[which(!isFailedSim)]
 
-finalPAI <- unlist(lapply(out_filtered, function(x) x$newPAI))
+finalPAI <- unlist(lapply(out_filtered, function(x) x$params$newPAI))
 expectedPAI <- samplePerms$lambda_p[which(!isFailedSim)]
-nIters <- sapply(out_filtered, function(x) x$nIters)
+nIters <- sapply(out_filtered, function(x) x$params$iters)
 plot(expectedPAI, finalPAI, pch = 20)
 abline(0, 1, col = "red")
 ```
@@ -201,4 +205,4 @@ abline(0, 1, col = "red")
 paste("MAE:", mean(abs(finalPAI - expectedPAI)))
 ```
 
-    ## [1] "MAE: 0.0271638994384761"
+    ## [1] "MAE: 0.0269152382016592"

@@ -7,7 +7,7 @@ library(rgdal)
 
 source("R/functions.R")
 #seed value for random operations
-seedVal <- 2365
+seedVal <- 2376
 set.seed(seed = seedVal)
 
 #output Directory for shape file
@@ -34,16 +34,16 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
                                                 maxIters = 200)
 
 
-newDomainExtent <- buildDistribution$domainExtent
+newDomainExtent <- buildDistribution$params$domainExtent
 print(paste("Used seed", seedVal))
-plot(buildDistribution$polygons, main = paste("Seed:", seedVal))
+plot(buildDistribution$polygons, main = paste("Seed:", buildDistribution$params$seedVal))
 axis(1, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 axis(2, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"], 
      ytop = newDomainExtent["y", "max"], lwd = 2)
 rect(xleft = 0, ybottom = 0, xright = DART_XorY_m, 
      ytop = DART_XorY_m, lwd = 2, lty = 2)
-actualPAI <- buildDistribution$newPAI
+actualPAI <- buildDistribution$params$newPAI
 oDir_ID <- writebuildDistribution(buildDistribution, oDir)
 list.files(oDir_ID)
 unlink(oDir_ID, recursive = TRUE)

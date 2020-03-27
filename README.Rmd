@@ -84,15 +84,15 @@ names(buildDistribution)
 ```{r}
 polygonData <- buildDistribution$polygons
 #the new domain will be slightly different
-newDomainExtent <- bbox(buildDistribution$polygons)
+newDomainExtent <- buildDistribution$params$domainExtent
 
 plot(polygonData, main = paste("Seed:", seedVal))
 axis(1, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 axis(2, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"], 
      ytop = newDomainExtent["y", "max"], lwd = 2)
-rect(xleft = 0, ybottom = 0, xright = 430, 
-     ytop = 430, lwd = 2, lty = 2)
+rect(xleft = 0, ybottom = 0, xright = buildDistribution$params$DART_XorY_m, 
+     ytop = buildDistribution$params$DART_XorY_m, lwd = 2, lty = 2)
 legend("bottomleft", legend = c("Original", "Adjusted"), lty = c(2, 1), lwd = 2, ncol = 1, title = "Domain")
 
 actualPAI <- sum(area(polygonData)) / (newDomainExtent["x", "max"] * newDomainExtent["y", "max"])
@@ -145,9 +145,9 @@ stopCluster(cl)
 isFailedSim <- sapply(out, is.null)
 out_filtered <- out[which(!isFailedSim)]
 
-finalPAI <- unlist(lapply(out_filtered, function(x) x$newPAI))
+finalPAI <- unlist(lapply(out_filtered, function(x) x$params$newPAI))
 expectedPAI <- samplePerms$lambda_p[which(!isFailedSim)]
-nIters <- sapply(out_filtered, function(x) x$nIters)
+nIters <- sapply(out_filtered, function(x) x$params$iters)
 plot(expectedPAI, finalPAI, pch = 20)
 abline(0, 1, col = "red")
 paste("MAE:", mean(abs(finalPAI - expectedPAI)))
