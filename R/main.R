@@ -8,6 +8,7 @@ library(rgdal)
 source("R/functions.R")
 #seed value for random operations
 seedVal <- 2376
+seedVal <- 237612
 set.seed(seed = seedVal)
 
 #output Directory for shape file
@@ -47,4 +48,8 @@ actualPAI <- buildDistribution$params$newPAI
 oDir_ID <- writebuildDistribution(buildDistribution, oDir)
 list.files(oDir_ID)
 unlink(oDir_ID, recursive = TRUE)
-
+#raw polygon centroids
+points(buildDistribution$polygonCentroids, cex = 1)
+#centroids shifted to DART coordinates (DART x=0,y=0 origin is top left, x is down and y is right)
+points(buildDistribution$df$y, 
+       (buildDistribution$params$domainExtent[,2][2] - buildDistribution$df$x), col = "red", cex = 0.8)

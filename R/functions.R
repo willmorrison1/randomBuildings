@@ -102,9 +102,10 @@ createBuildingDistribution <- function(nBuildings,
   out <- list()
   out$polygons <- SP_shifted
   polyDFcentroids <- data.frame(rgeos::gCentroid(SP_shifted, byid = TRUE))
+  domainExtentVals <- bbox(SP_shifted)
   outDF_DARTcompatible <- outDF_DARTcompatible %>%
     dplyr::mutate(y = y - SPbbox[,"min"]["x"],
-                 x = x + min(polyDFcentroids$y))
+                 x = x + min(domainExtentVals[,"max"]["y"] - polyDFcentroids$y))
   out$df <- outDF_DARTcompatible
   paramsList <- createParamsList(polygonsData = SP_shifted, 
                                  nBuildings = nBuildings, 
@@ -118,7 +119,7 @@ createBuildingDistribution <- function(nBuildings,
                                  seedVal = seedVal - 1, 
                                  iters = nIters,
                                  maxIters = maxIters, 
-                                 domainExtent = bbox(SP_shifted))
+                                 domainExtent = domainExtentVals)
   out$shiftAmount <- SPbbox
   out$params <- paramsList
   out$polygonCentroids <- polyDFcentroids
