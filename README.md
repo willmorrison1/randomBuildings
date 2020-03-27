@@ -87,23 +87,22 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
 names(buildDistribution)
 ```
 
-    ## [1] "polygons"     "df"           "nIters"       "seed"         "domainExtent"
-    ## [6] "newPAI"       "params"
+    ## [1] "polygons" "df"       "params"
 
 ## Polygons
 
 ``` r
 polygonData <- buildDistribution$polygons
 #the new domain will be slightly different
-newDomainExtent <- bbox(buildDistribution$polygons)
+newDomainExtent <- buildDistribution$params$domainExtent
 
 plot(polygonData, main = paste("Seed:", seedVal))
 axis(1, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 axis(2, at = seq(-DART_XorY_m, DART_XorY_m, by = 20), cex.axis = 0.7)
 rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"], 
      ytop = newDomainExtent["y", "max"], lwd = 2)
-rect(xleft = 0, ybottom = 0, xright = 430, 
-     ytop = 430, lwd = 2, lty = 2)
+rect(xleft = 0, ybottom = 0, xright = buildDistribution$params$DART_XorY_m, 
+     ytop = buildDistribution$params$DART_XorY_m, lwd = 2, lty = 2)
 legend("bottomleft", legend = c("Original", "Adjusted"), lty = c(2, 1), lwd = 2, ncol = 1, title = "Domain")
 ```
 
@@ -114,7 +113,7 @@ actualPAI <- sum(area(polygonData)) / (newDomainExtent["x", "max"] * newDomainEx
 print(paste("desired PAI:",lambda_p, "actual PAI:", actualPAI))
 ```
 
-    ## [1] "desired PAI: 0.3 actual PAI: 0.30940542035187"
+    ## [1] "desired PAI: 0.3 actual PAI: 0.306258745517568"
 
 ## Data frame
 
@@ -123,13 +122,13 @@ DARTdfData <- buildDistribution$df
 head(DARTdfData)
 ```
 
-    ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot      Zrot
-    ## 1      0 411.1654  50.90804 0 22.82177 22.82177 18.96402    0    0 320.07727
-    ## 2      0 414.0608 131.34597 0 22.82177 22.82177 15.16650    0    0 332.58542
-    ## 3      0 419.8536 208.88646 0 22.82177 22.82177 17.40861    0    0 357.61050
-    ## 4      0 428.0810 283.99241 0 22.82177 22.82177 16.04040    0    0  33.15277
-    ## 5      0 413.4830 381.92371 0 22.82177 22.82177 11.23504    0    0 330.08959
-    ## 6      0 422.9214 455.81872 0 22.82177 22.82177 15.60039    0    0  10.86314
+    ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot       Zrot
+    ## 1      0 417.0075  51.31184 0 22.82177 22.82177 19.46556    0    0 318.332834
+    ## 2      0 428.9924 122.66023 0 22.82177 22.82177 14.69256    0    0  10.107818
+    ## 3      0 427.6722 207.31382 0 22.82177 22.82177 16.04018    0    0   4.404305
+    ## 4      0 432.3789 285.94044 0 22.82177 22.82177 21.80902    0    0  24.737295
+    ## 5      0 423.2918 378.36086 0 22.82177 22.82177 15.69572    0    0 345.481068
+    ## 6      0 430.2596 454.72636 0 22.82177 22.82177 18.43375    0    0  15.582118
 
 ## Parameters
 
@@ -221,9 +220,9 @@ stopCluster(cl)
 isFailedSim <- sapply(out, is.null)
 out_filtered <- out[which(!isFailedSim)]
 
-finalPAI <- unlist(lapply(out_filtered, function(x) x$newPAI))
+finalPAI <- unlist(lapply(out_filtered, function(x) x$params$newPAI))
 expectedPAI <- samplePerms$lambda_p[which(!isFailedSim)]
-nIters <- sapply(out_filtered, function(x) x$nIters)
+nIters <- sapply(out_filtered, function(x) x$params$iters)
 plot(expectedPAI, finalPAI, pch = 20)
 abline(0, 1, col = "red")
 ```
@@ -234,4 +233,4 @@ abline(0, 1, col = "red")
 paste("MAE:", mean(abs(finalPAI - expectedPAI)))
 ```
 
-    ## [1] "MAE: 0.025653632618599"
+    ## [1] "MAE: 0.0271638994384761"

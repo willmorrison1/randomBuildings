@@ -7,5 +7,12 @@ sampleData:
   DARTbuildSizeXYZ: 2.0
   XYoffset_factor: 0.25
   maxBuildRotation: 45.0
-  seedVal: 2363.0
+  seedVal: 2362.0
+  iters: 1.0
   maxIters: 250.0
+  domainExtent:
+  - 0.0
+  - 0.0
+  - 494.8149634
+  - 494.9142285
+  newPAI: 0.3062587

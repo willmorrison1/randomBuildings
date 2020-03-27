@@ -25,7 +25,6 @@ createBuildingDistribution <- function(nBuildings,
   nIters <- 0
   
   while (overlappingPolys) {
-    seedVal <- seedVal + 1
     #initiate data frame with building centroid x,y locations
     outDF <- expand.grid(x = x, y = y)
     #randomly add x,y coordinate shifts
@@ -85,27 +84,26 @@ createBuildingDistribution <- function(nBuildings,
     area_preAgg <- as.numeric(gArea(SP_cycled))
     area_postAgg <- as.numeric(gArea(aggregate(SP_cycled)))
     if ((area_preAgg - area_postAgg) < 1e-5) overlappingPolys <- FALSE
-    nIters <- nIters + 1
     if (nIters > maxIters) {
       warning(paste0("Maximum number of iterations reached (", maxIters, ")"))
       return(NULL)
     }
+    seedVal <- seedVal + 1
+    nIters <- nIters + 1
   }
   
   #remove empty space atedge of domain
   SPbbox <- bbox(SP)
   SP_shifted <- raster::shift(SP, dx = -SPbbox["x", "min"], dy = -SPbbox["y", "min"])
-  SP_shifted <- SpatialPolygonsDataFrame(Sr = SP_shifted, data = data.frame("z" = outDF$Zscale * DARTbuildSizeXYZ))
+  SP_shifted <- SpatialPolygonsDataFrame(Sr = SP_shifted, 
+                                         data = data.frame("z" = outDF$Zscale * DARTbuildSizeXYZ))
   
   #put all in output list
   out <- list()
   out$polygons <- SP_shifted
   out$df <- outDF_DARTcompatible
-  out$nIters <- nIters
-  out$seed <- seedVal
-  out$domainExtent <- bbox(SP_shifted)
-  out$newPAI <- sum(area(SP_shifted)) / (out$domainExtent["x", "max"] * out$domainExtent["y", "max"])
-  paramsList <- createParamsList(nBuildings = nBuildings, 
+  paramsList <- createParamsList(polygonsData = SP_shifted, 
+                                 nBuildings = nBuildings, 
                                  lambda_p = lambda_p,
                                  z_mean = z_mean,
                                  z_sd = z_sd, 
@@ -113,13 +111,16 @@ createBuildingDistribution <- function(nBuildings,
                                  DARTbuildSizeXYZ = DARTbuildSizeXYZ, 
                                  XYoffset_factor = XYoffset_factor, 
                                  maxBuildRotation = maxBuildRotation,
-                                 seedVal = seedVal, 
-                                 maxIters = maxIters)
+                                 seedVal = seedVal - 1, 
+                                 iters = nIters,
+                                 maxIters = maxIters, 
+                                 domainExtent = bbox(SP_shifted))
   out$params <- paramsList
   return(out)
 }
 
-createParamsList <- function(nBuildings, 
+createParamsList <- function(polygonsData,
+                             nBuildings, 
                              lambda_p,
                              z_mean,
                              z_sd, 
@@ -127,8 +128,10 @@ createParamsList <- function(nBuildings,
                              DARTbuildSizeXYZ, 
                              XYoffset_factor, 
                              maxBuildRotation,
-                             seedVal = floor(runif(1, min = 1, max = 100)), 
-                             maxIters = 250) {
+                             seedVal, 
+                             iters,
+                             maxIters,
+                             domainExtent) {
   
   out <- list()
   out$nBuildings <- nBuildings
@@ -140,8 +143,10 @@ createParamsList <- function(nBuildings,
   out$XYoffset_factor <- XYoffset_factor
   out$maxBuildRotation <- maxBuildRotation
   out$seedVal <- seedVal
+  out$iters <- iters
   out$maxIters <- maxIters
-  
+  out$domainExtent <- domainExtent
+  out$newPAI <- sum(area(polygonsData)) / (domainExtent["x", "max"] * domainExtent["y", "max"])
   return(out)
 }
 
