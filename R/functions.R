@@ -95,7 +95,6 @@ createBuildingDistribution <- function(nBuildings,
   #remove empty space atedge of domain
   SPbbox <- bbox(SP)
   SP_shifted <- raster::shift(SP, dx = -SPbbox["x", "min"], dy = -SPbbox["y", "min"])
-  browser()
   SP_shifted <- SpatialPolygonsDataFrame(Sr = SP_shifted, 
                                          data = data.frame("z" = outDF$Zscale * DARTbuildSizeXYZ))
   
