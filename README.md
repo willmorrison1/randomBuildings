@@ -12,8 +12,6 @@ William Morrison
       - [Polygons](#polygons)
       - [Data frame](#data-frame)
       - [Parameters](#parameters)
-      - [Defined values](#defined-values)
-      - [Output values](#output-values)
   - [Write data](#write-data)
   - [Validate across a wide range of
     inputs](#validate-across-a-wide-range-of-inputs)
@@ -135,7 +133,7 @@ head(DARTdfData)
 The paramters are stored in a yaml file
 (e.g. rBldgsParams\_*fileID*.yml) with the following fields:
 
-## Defined values
+### Defined values
 
 See above code examples for details on these defined values:
 
@@ -149,7 +147,7 @@ See above code examples for details on these defined values:
     maxBuildRotation: Building rotation around domain North
     maxIters: Maximum iterations allowed
 
-## Output values
+### Output values
 
     seedVal: Seed value used
     iters: Number of iterations it took to get a result

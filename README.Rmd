@@ -110,7 +110,7 @@ head(DARTdfData)
 
 The paramters are stored in a yaml file (e.g. rBldgsParams_*fileID*.yml) with the following fields:
 
-## Defined values
+### Defined values
 
 See above code examples for details on these defined values:
 ```
@@ -124,7 +124,7 @@ XYoffset_factor: (See code examples)
 maxBuildRotation: Building rotation around domain North
 maxIters: Maximum iterations allowed
 ```
-## Output values
+### Output values
 
 ```
 seedVal: Seed value used
