@@ -11,7 +11,10 @@ William Morrison
   - [Explore the output](#explore-the-output)
       - [Polygons](#polygons)
       - [Data frame](#data-frame)
-      - [Write data](#write-data)
+      - [Parameters](#parameters)
+      - [Defined values](#defined-values)
+      - [Output values](#output-values)
+  - [Write data](#write-data)
   - [Validate across a wide range of
     inputs](#validate-across-a-wide-range-of-inputs)
 
@@ -39,13 +42,13 @@ source("R/functions.R")
 
 ``` r
 #for the random operations
-seedVal <- 2361
+seedVal <- 2362
 #total buildings in domain (forces building separation and width)
 nBuildings <- 40
 #plan area build fraction (lambda_p) (forces building separation and width)
 lambda_p <- 0.3
 #desired DART domain horizontal length in X and Y (m)
-DART_XorY_m <- 430
+DART_XorY_m <- 500
 #DART building size (m) - the size of a DART cube in XYZ.
 #all other building sizes in this code are scaled based on this size
 DARTbuildSizeXYZ <- 2
@@ -111,7 +114,7 @@ actualPAI <- sum(area(polygonData)) / (newDomainExtent["x", "max"] * newDomainEx
 print(paste("desired PAI:",lambda_p, "actual PAI:", actualPAI))
 ```
 
-    ## [1] "desired PAI: 0.3 actual PAI: 0.306258745518674"
+    ## [1] "desired PAI: 0.3 actual PAI: 0.30940542035187"
 
 ## Data frame
 
@@ -120,15 +123,45 @@ DARTdfData <- buildDistribution$df
 head(DARTdfData)
 ```
 
-    ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot       Zrot
-    ## 1      0 358.6264  44.12819 0 19.62672 19.62672 19.46556    0    0 318.332834
-    ## 2      0 368.9335 105.48780 0 19.62672 19.62672 14.69256    0    0  10.107818
-    ## 3      0 367.7981 178.28988 0 19.62672 19.62672 16.04018    0    0   4.404305
-    ## 4      0 371.8458 245.90878 0 19.62672 19.62672 21.80902    0    0  24.737295
-    ## 5      0 364.0309 325.39034 0 19.62672 19.62672 15.69572    0    0 345.481068
-    ## 6      0 370.0233 391.06467 0 19.62672 19.62672 18.43375    0    0  15.582118
+    ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot      Zrot
+    ## 1      0 411.1654  50.90804 0 22.82177 22.82177 18.96402    0    0 320.07727
+    ## 2      0 414.0608 131.34597 0 22.82177 22.82177 15.16650    0    0 332.58542
+    ## 3      0 419.8536 208.88646 0 22.82177 22.82177 17.40861    0    0 357.61050
+    ## 4      0 428.0810 283.99241 0 22.82177 22.82177 16.04040    0    0  33.15277
+    ## 5      0 413.4830 381.92371 0 22.82177 22.82177 11.23504    0    0 330.08959
+    ## 6      0 422.9214 455.81872 0 22.82177 22.82177 15.60039    0    0  10.86314
 
-## Write data
+## Parameters
+
+The paramters are stored in a yaml file
+(e.g. rBldgsParams\_*fileID*.yml) with the following fields:
+
+## Defined values
+
+See above code examples for details on these defined values:
+
+    nBuildings: number of buildings
+    lambda_p: plan area index
+    z_mean: mean building height (m)
+    z_sd: building height standard deviation (m)
+    DART_XorY_m: Domain area in X or Y (m)
+    DARTbuildSizeXYZ: Size of DART building obj (m)
+    XYoffset_factor: (See code examples)
+    maxBuildRotation: Building rotation around domain North
+    maxIters: Maximum iterations allowed
+
+## Output values
+
+    seedVal: Seed value used
+    iters: Number of iterations it took to get a result
+    domainExtent:
+      - minX - should be zero (m)
+      - minY - should be zero (m)
+      - maxX (maxY in DART coordinates) (m)
+      - maxY (maxX in DART coordinates) (m)
+    newPAI: Final plan area index
+
+# Write data
 
 ``` r
 oDir <- getwd()
@@ -201,4 +234,4 @@ abline(0, 1, col = "red")
 paste("MAE:", mean(abs(finalPAI - expectedPAI)))
 ```
 
-    ## [1] "MAE: 0.0271638994384761"
+    ## [1] "MAE: 0.025653632618599"

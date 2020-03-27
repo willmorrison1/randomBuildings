@@ -32,13 +32,13 @@ source("R/functions.R")
 # Define parameters
 ```{r}
 #for the random operations
-seedVal <- 2361
+seedVal <- 2362
 #total buildings in domain (forces building separation and width)
 nBuildings <- 40
 #plan area build fraction (lambda_p) (forces building separation and width)
 lambda_p <- 0.3
 #desired DART domain horizontal length in X and Y (m)
-DART_XorY_m <- 430
+DART_XorY_m <- 500
 #DART building size (m) - the size of a DART cube in XYZ.
 #all other building sizes in this code are scaled based on this size
 DARTbuildSizeXYZ <- 2
@@ -106,7 +106,38 @@ DARTdfData <- buildDistribution$df
 head(DARTdfData)
 ```
 
-## Write data
+## Parameters
+
+The paramters are stored in a yaml file (e.g. rBldgsParams_*fileID*.yml) with the following fields:
+
+## Defined values
+
+See above code examples for details on these defined values:
+```
+nBuildings: number of buildings
+lambda_p: plan area index
+z_mean: mean building height (m)
+z_sd: building height standard deviation (m)
+DART_XorY_m: Domain area in X or Y (m)
+DARTbuildSizeXYZ: Size of DART building obj (m)
+XYoffset_factor: (See code examples)
+maxBuildRotation: Building rotation around domain North
+maxIters: Maximum iterations allowed
+```
+## Output values
+
+```
+seedVal: Seed value used
+iters: Number of iterations it took to get a result
+domainExtent:
+  - minX - should be zero (m)
+  - minY - should be zero (m)
+  - maxX (maxY in DART coordinates) (m)
+  - maxY (maxX in DART coordinates) (m)
+newPAI: Final plan area index
+```
+
+# Write data
 ```{r}
 oDir <- getwd()
 unlink("sampleData", recursive = TRUE)
