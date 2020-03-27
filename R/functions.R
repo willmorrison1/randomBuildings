@@ -8,7 +8,7 @@ createBuildingDistribution <- function(nBuildings,
                                        maxBuildRotation,
                                        seedVal = floor(runif(1, min = 1, max = 100)), 
                                        maxIters = 250) {
-  
+  require(dplyr)
   #predefine model domain
   nBuildingsXorY <- ceiling(sqrt(nBuildings))
   buildingDistance0 <- seq(0, DART_XorY_m, length.out = nBuildingsXorY)
