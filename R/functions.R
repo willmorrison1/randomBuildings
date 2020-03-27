@@ -115,6 +115,7 @@ createBuildingDistribution <- function(nBuildings,
                                  iters = nIters,
                                  maxIters = maxIters, 
                                  domainExtent = bbox(SP_shifted))
+  out$shiftAmount <- SPbbox
   out$params <- paramsList
   return(out)
 }
