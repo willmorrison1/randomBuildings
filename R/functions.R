@@ -101,7 +101,7 @@ createBuildingDistribution <- function(nBuildings,
   #put all in output list
   out <- list()
   out$polygons <- SP_shifted
-  polyDFcentroids <- data.frame(rgeos::gCentroid(buildDistribution$polygons, byid = TRUE))
+  polyDFcentroids <- data.frame(rgeos::gCentroid(SP_shifted, byid = TRUE))
   outDF_DARTcompatible <- outDF_DARTcompatible %>%
     dplyr:mutate(y = y - SPbbox[,"min"]["x"],
                  x = x - min(polyDFcentroids$y))
