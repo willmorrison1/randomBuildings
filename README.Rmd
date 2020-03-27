@@ -94,7 +94,11 @@ rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"],
 rect(xleft = 0, ybottom = 0, xright = buildDistribution$params$DART_XorY_m, 
      ytop = buildDistribution$params$DART_XorY_m, lwd = 2, lty = 2)
 legend("bottomleft", legend = c("Original", "Adjusted"), lty = c(2, 1), lwd = 2, ncol = 1, title = "Domain")
-
+#raw polygon centroids
+points(buildDistribution$polygonCentroids, cex = 1)
+#centroids shifted to DART coordinates (DART x=0,y=0 origin is top left, x is down and y is right)
+points(buildDistribution$df$y, 
+       (buildDistribution$params$domainExtent[,2][2] - buildDistribution$df$x), col = "red", cex = 0.8)
 actualPAI <- sum(area(polygonData)) / (newDomainExtent["x", "max"] * newDomainExtent["y", "max"])
 print(paste("desired PAI:",lambda_p, "actual PAI:", actualPAI))
 

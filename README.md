@@ -78,6 +78,27 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
                                                 seedVal = seedVal)
 ```
 
+    ## Loading required package: dplyr
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:raster':
+    ## 
+    ##     intersect, select, union
+
+    ## The following objects are masked from 'package:rgeos':
+    ## 
+    ##     intersect, setdiff, union
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
 # Explore the output
 
 ``` r
@@ -85,7 +106,8 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
 names(buildDistribution)
 ```
 
-    ## [1] "polygons" "df"       "params"
+    ## [1] "polygons"         "df"               "shiftAmount"      "params"          
+    ## [5] "polygonCentroids"
 
 ## Polygons
 
@@ -102,6 +124,11 @@ rect(xleft = 0, ybottom = 0, xright = newDomainExtent["x", "max"],
 rect(xleft = 0, ybottom = 0, xright = buildDistribution$params$DART_XorY_m, 
      ytop = buildDistribution$params$DART_XorY_m, lwd = 2, lty = 2)
 legend("bottomleft", legend = c("Original", "Adjusted"), lty = c(2, 1), lwd = 2, ncol = 1, title = "Domain")
+#raw polygon centroids
+points(buildDistribution$polygonCentroids, cex = 1)
+#centroids shifted to DART coordinates (DART x=0,y=0 origin is top left, x is down and y is right)
+points(buildDistribution$df$y, 
+       (buildDistribution$params$domainExtent[,2][2] - buildDistribution$df$x), col = "red", cex = 0.8)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
@@ -121,12 +148,12 @@ head(DARTdfData)
 ```
 
     ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot       Zrot
-    ## 1      0 417.0075  51.31184 0 22.82177 22.82177 19.46556    0    0 318.332834
-    ## 2      0 428.9924 122.66023 0 22.82177 22.82177 14.69256    0    0  10.107818
-    ## 3      0 427.6722 207.31382 0 22.82177 22.82177 16.04018    0    0   4.404305
-    ## 4      0 432.3789 285.94044 0 22.82177 22.82177 21.80902    0    0  24.737295
-    ## 5      0 423.2918 378.36086 0 22.82177 22.82177 15.69572    0    0 345.481068
-    ## 6      0 430.2596 454.72636 0 22.82177 22.82177 18.43375    0    0  15.582118
+    ## 1      0 447.2850  48.66473 0 22.82177 22.82177 19.46556    0    0 318.332834
+    ## 2      0 459.2699 120.01312 0 22.82177 22.82177 14.69256    0    0  10.107818
+    ## 3      0 457.9497 204.66671 0 22.82177 22.82177 16.04018    0    0   4.404305
+    ## 4      0 462.6564 283.29333 0 22.82177 22.82177 21.80902    0    0  24.737295
+    ## 5      0 453.5693 375.71375 0 22.82177 22.82177 15.69572    0    0 345.481068
+    ## 6      0 460.5371 452.07925 0 22.82177 22.82177 18.43375    0    0  15.582118
 
 ## Parameters
 
