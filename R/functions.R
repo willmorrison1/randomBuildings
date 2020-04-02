@@ -7,7 +7,8 @@ createBuildingDistribution <- function(nBuildings,
                                        XYoffset_factor, 
                                        maxBuildRotation,
                                        seedVal = floor(runif(1, min = 1, max = 100)), 
-                                       maxIters = 250) {
+                                       maxIters = 250, 
+                                       forcePolygonSeparation = TRUE) {
   require(dplyr)
   #predefine model domain
   nBuildingsXorY <- ceiling(sqrt(nBuildings))
@@ -83,7 +84,7 @@ createBuildingDistribution <- function(nBuildings,
     SP_cycled <- do.call(bind, list(SP, LHS, topHS))
     area_preAgg <- as.numeric(gArea(SP_cycled))
     area_postAgg <- as.numeric(gArea(aggregate(SP_cycled)))
-    if ((area_preAgg - area_postAgg) < 1e-5) overlappingPolys <- FALSE
+    if ((area_preAgg - area_postAgg) < 1e-5 | !forcePolygonSeparation) overlappingPolys <- FALSE
     if (nIters > maxIters) {
       warning(paste0("Maximum number of iterations reached (", maxIters, ")"))
       return(NULL)

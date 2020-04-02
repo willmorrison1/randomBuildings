@@ -8,14 +8,13 @@ library(rgdal)
 source("R/functions.R")
 #seed value for random operations
 seedVal <- 2376
-seedVal <- 237612
 set.seed(seed = seedVal)
 
 #output Directory for shape file
 oDir <- getwd()
 
-nBuildings <- 175
-lambda_p <- 0.37
+nBuildings <- 45
+lambda_p <- 0.57
 DART_XorY_m <- 500
 DARTbuildSizeXYZ <- 2
 XYoffset_factor <- 0.45
@@ -32,7 +31,8 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
                                                 XYoffset_factor = XYoffset_factor,
                                                 maxBuildRotation = maxBuildRotation, 
                                                 seedVal = seedVal, 
-                                                maxIters = 200)
+                                                maxIters = 200, 
+                                                forcePolygonSeparation = FALSE)
 
 
 newDomainExtent <- buildDistribution$params$domainExtent
