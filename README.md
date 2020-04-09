@@ -80,6 +80,8 @@ buildDistribution <- createBuildingDistribution(nBuildings = nBuildings,
 
     ## Loading required package: dplyr
 
+    ## Warning: package 'dplyr' was built under R version 3.5.3
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -138,7 +140,7 @@ actualPAI <- sum(area(polygonData)) / (newDomainExtent["x", "max"] * newDomainEx
 print(paste("desired PAI:",lambda_p, "actual PAI:", actualPAI))
 ```
 
-    ## [1] "desired PAI: 0.3 actual PAI: 0.306258745517568"
+    ## [1] "desired PAI: 0.3 actual PAI: 0.322350626504183"
 
 ## Data frame
 
@@ -148,12 +150,12 @@ head(DARTdfData)
 ```
 
     ##   objInd        x         y z   Xscale   Yscale   Zscale Xrot Yrot       Zrot
-    ## 1      0 449.2653  48.66473 0 22.82177 22.82177 19.46556    0    0 318.332834
-    ## 2      0 461.2503 120.01312 0 22.82177 22.82177 14.69256    0    0  10.107818
-    ## 3      0 459.9300 204.66671 0 22.82177 22.82177 16.04018    0    0   4.404305
-    ## 4      0 464.6367 283.29333 0 22.82177 22.82177 21.80902    0    0  24.737295
-    ## 5      0 455.5496 375.71375 0 22.82177 22.82177 15.69572    0    0 345.481068
-    ## 6      0 462.5175 452.07925 0 22.82177 22.82177 18.43375    0    0  15.582118
+    ## 1      0 418.0153  17.41473 0 22.82177 22.82177 19.46556    0    0 318.332834
+    ## 2      0 430.0003  88.76312 0 22.82177 22.82177 14.69256    0    0  10.107818
+    ## 3      0 428.6800 173.41671 0 22.82177 22.82177 16.04018    0    0   4.404305
+    ## 4      0 433.3867 252.04333 0 22.82177 22.82177 21.80902    0    0  24.737295
+    ## 5      0 424.2996 344.46375 0 22.82177 22.82177 15.69572    0    0 345.481068
+    ## 6      0 431.2675 420.82925 0 22.82177 22.82177 18.43375    0    0  15.582118
 
 ## Parameters
 
@@ -192,6 +194,11 @@ oDir <- getwd()
 unlink("sampleData", recursive = TRUE)
 #set fID to give manual file ID, else will give random string
 oDir_ID <- writebuildDistribution(buildDistribution, oDir, fID = "sampleData")
+```
+
+    ## Warning: package 'yaml' was built under R version 3.5.3
+
+``` r
 list.files(oDir_ID)
 ```
 
@@ -211,17 +218,17 @@ samplePerms <- expand.grid(nBuildings = seq(20, 100, by = 40),
 library(foreach)
 ```
 
-    ## Warning: package 'foreach' was built under R version 3.6.3
+    ## Warning: package 'foreach' was built under R version 3.5.3
 
 ``` r
 library(doParallel)
 ```
 
-    ## Warning: package 'doParallel' was built under R version 3.6.3
+    ## Warning: package 'doParallel' was built under R version 3.5.3
 
     ## Loading required package: iterators
 
-    ## Warning: package 'iterators' was built under R version 3.6.3
+    ## Warning: package 'iterators' was built under R version 3.5.3
 
     ## Loading required package: parallel
 
@@ -258,4 +265,4 @@ abline(0, 1, col = "red")
 paste("MAE:", mean(abs(finalPAI - expectedPAI)))
 ```
 
-    ## [1] "MAE: 0.0271638994384761"
+    ## [1] "MAE: 0.0188560971204426"

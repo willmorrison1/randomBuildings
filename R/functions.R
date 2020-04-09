@@ -92,21 +92,24 @@ createBuildingDistribution <- function(nBuildings,
     seedVal <- seedVal + 1
     nIters <- nIters + 1
   }
-  
+  polyDFcentroids <- data.frame(rgeos::gCentroid(SP, byid = TRUE))
+  SP <- gIntersection(SP, as(extent(SP) - (singleBuildingDistance * 0.75), "SpatialPolygons"), byid = TRUE)
+  if (length(SP) != nrow(polyDFcentroids)) 
+    stop("You have lost buildings out of the edge of the domain please make XYoffset_factor smaller.")
   #remove empty space atedge of domain
   SPbbox <- bbox(SP)
   SP_shifted <- raster::shift(SP, dx = -SPbbox["x", "min"], dy = -SPbbox["y", "min"])
+  polyDFcentroids$x <- polyDFcentroids$x - SPbbox["x", "min"]
+  polyDFcentroids$y <- polyDFcentroids$y - SPbbox["y", "min"]
   SP_shifted <- SpatialPolygonsDataFrame(Sr = SP_shifted, 
                                          data = data.frame("z" = outDF$Zscale * DARTbuildSizeXYZ))
-  
   #put all in output list
   out <- list()
   out$polygons <- SP_shifted
-  polyDFcentroids <- data.frame(rgeos::gCentroid(SP_shifted, byid = TRUE))
   domainExtentVals <- bbox(SP_shifted)
   outDF_DARTcompatible <- outDF_DARTcompatible %>%
     dplyr::mutate(y = y - SPbbox[,"min"]["x"],
-                 x = x + min(domainExtentVals[,"max"]["y"] - polyDFcentroids$y))
+                  x = x + min(domainExtentVals[,"max"]["y"] - polyDFcentroids$y))
   out$df <- outDF_DARTcompatible
   paramsList <- createParamsList(polygonsData = SP_shifted, 
                                  nBuildings = nBuildings, 
