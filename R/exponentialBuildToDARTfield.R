@@ -2,12 +2,18 @@ library(tidyr)
 library(dplyr)
 library(tools)
 source("R/functions.R")
-inFileFull <- "sampleData/expBldsInput/9NLE6_10400305.txt"
-fID <- buildingsFileID(file_path_sans_ext(basename(inFileFull)))
+inDirFull <- "sampleData/expBldsInput/"
+inFilesFull <- list.files(inDirFull)
+fID_raw <- unique(sapply(file_path_sans_ext(inFilesFull), function(x) strsplit(x, "_")[[1]][1]))[1]
+fID <- buildingsFileID(fID_raw)
+#the seed number is in the file name so I can't identify what is the actual data.
+inFileFull <- "sampleData/expBldsInput/ZKS66_442000305.txt"
 inDat <- read.table(inFileFull, header = TRUE)
+inMetaFileFull <- "sampleData/expBldsInput/ZKS66_variables.txt"
+inMeta <- read.table(inMetaFileFull, header = TRUE)
 outDat <- inDat
 DARTbuildSizeXYZ <- 2
-XYsize <- 400
+XYsize <- inMeta$nx
 
 #1) switch coordinates
 outDat$X_centre <- inDat$Y_centre
