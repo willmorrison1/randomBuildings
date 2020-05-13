@@ -18,11 +18,11 @@ set.seed(seed = seedVal)
 oDir_base <- "C:/Users/micromet/Desktop/temp"
 if (!dir.exists(oDir_base)) dir.create(oDir_base)
 
-nBuildings <- 20
-lambda_p <- 0.2
-DART_XorY_m <- 200
+nBuildings <- 800
+lambda_p <- 0.5
+DART_XorY_m <- 2000
 DARTbuildSizeXYZ <- 2
-XYoffset_factor <- 0.5
+XYoffset_factor <- 3
 maxBuildRotation <- 45
 z_mean <- 30
 z_sd <- 0

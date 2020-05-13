@@ -204,6 +204,7 @@ writeShp <- function(buildDistribution, oDir, fID) {
 writeDARTdf <- function(buildDistribution, oDir, fID) {
   
   oDir_df <- file.path(oDir, fID$ID)
+  if (!dir.exists(oDir_df)) dir.create(oDir_df)
   oFile_df <- file.path(oDir_df, paste0("DART_fields_", fID$ID, ".txt", sep = ""))
   writeLines(text = "complete transformation", 
              con = oFile_df)
