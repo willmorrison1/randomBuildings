@@ -226,3 +226,40 @@ writebuildDistribution <- function(buildDistribution, oDir, fID = NULL) {
   return(oDir_full)
   
 }
+
+expBuildToDARTfield <- function(inFileFull, outDir = dirname(inFileFull)) {
+  
+  baseDir <- dirname(inFileFull)
+  fID_raw <- sapply(file_path_sans_ext(basename(inFileFull)), function(x) strsplit(x, "_")[[1]][1])
+  fID <- buildingsFileID(fID = fID_raw)
+  inDat <- read.table(inFileFull, header = TRUE)
+  inMetaFileFull <- file.path(baseDir, paste0(fID$ID, "_parameters.txt"))
+  inMeta <- read.table(inMetaFileFull, header = TRUE)
+  outDat <- inDat
+  DARTbuildSizeXYZ <- 2
+  XYsize <- inMeta$nx
+  
+  #1) switch coordinates
+  outDat$X_centre <- inDat$Y_centre
+  outDat$Y_centre <- inDat$X_centre
+  
+  #2) reverse X axis
+  outDat$X_centre <- XYsize - outDat$X_centre
+  
+  #3) add extra columns
+  outDat <- outDat %>%
+    dplyr::mutate(objInd = 0, 
+                  Xrot = 0, 
+                  Yrot = 0,
+                  Rotation = Rotation,
+                  Z_centre = DARTbuildSizeXYZ / 2,
+                  Xscale = (Radius / DARTbuildSizeXYZ) * 2,
+                  Yscale = (Radius / DARTbuildSizeXYZ) * 2, 
+                  H = H / DARTbuildSizeXYZ) %>%
+    #4) sort columns
+    dplyr::select(objInd, X_centre, Y_centre, Z_centre, Xscale, Yscale, H, Xrot, Yrot, Rotation)
+  #5) write data
+  outDatAll <- list()
+  outDatAll$df <- outDat 
+  writeDARTdf(outDatAll, oDir = outDir, fID = fID)
+}

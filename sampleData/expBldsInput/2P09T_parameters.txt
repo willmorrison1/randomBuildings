@@ -1,0 +1,2 @@
+dx nx z_sd z_mean r_sd r_mean maxBuildRotation prescribed_lambda_p nobj lambda_p lambda_f H_W random_seed
+1 2000 5 30 5 17 90 0.5 10305 0.50003675 1.462605385418 2.925210770836 7
