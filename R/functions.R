@@ -228,7 +228,6 @@ writebuildDistribution <- function(buildDistribution, oDir, fID = NULL) {
 }
 
 expBuildToDARTfield <- function(inFileFull, outDir = dirname(inFileFull)) {
-  
   baseDir <- dirname(inFileFull)
   fID_raw <- sapply(file_path_sans_ext(basename(inFileFull)), function(x) strsplit(x, "_")[[1]][1])
   fID <- buildingsFileID(fID = fID_raw)
