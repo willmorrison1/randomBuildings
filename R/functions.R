@@ -169,8 +169,6 @@ buildingsFileID <- function(fID = NULL) {
   if (!is.null(fID)) return(list("ID" = fID, "fName" = buildingsFileID_Namestr(fID)))
   #making file ID
   library(stringi)
-  options(digits.secs = 8)
-  set.seed(print(Sys.time()))
   randomID <- stri_rand_strings(1, 5, pattern = "[A-Z0-9]")
   out <- list()
   out$ID <- randomID
