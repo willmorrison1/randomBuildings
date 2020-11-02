@@ -170,7 +170,7 @@ buildingsFileID <- function(fID = NULL) {
   #making file ID
   library(stringi)
   options(digits.secs = 8)
-  set.seed(Sys.time())
+  set.seed(print(Sys.time()))
   randomID <- stri_rand_strings(1, 5, pattern = "[A-Z0-9]")
   out <- list()
   out$ID <- randomID
