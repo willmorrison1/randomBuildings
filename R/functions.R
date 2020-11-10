@@ -1,14 +1,15 @@
 createBuildingDistribution <- function(nBuildings, 
                                        lambda_p,
-                                       z_mean,
-                                       z_sd, 
+                                       z_mid,
+                                       z_variability, 
                                        DART_XorY_m, 
                                        DARTbuildSizeXYZ, 
                                        XYoffset_factor, 
                                        maxBuildRotation,
                                        seedVal = floor(runif(1, min = 1, max = 100)), 
                                        maxIters = 250, 
-                                       forcePolygonSeparation = TRUE) {
+                                       forcePolygonSeparation = TRUE,
+                                      height_distribution_normal = TRUE) {
   require(dplyr)
   #predefine model domain
   nBuildingsXorY <- ceiling(sqrt(nBuildings))
@@ -45,7 +46,11 @@ createBuildingDistribution <- function(nBuildings,
     outDF$Xscale <- outDF$Yscale <- singleBuildingLength / DARTbuildSizeXYZ
     #set DART building heights (norm distribution)
     set.seed(seed = seedVal)
-    outDF$Zscale <- rnorm(n = nrow(outDF), mean = z_mean, sd = z_sd) / DARTbuildSizeXYZ
+    if (height_distribution_normal) {
+    outDF$Zscale <- rnorm(n = nrow(outDF), mean = z_mid, sd = z_variability) / DARTbuildSizeXYZ
+      } else {
+      outDF$Zscale <- runif(n = nrow(outDF), min = z_mid - (z_variability / 2),  max = z_mid + (z_variability / 2)) / DARTbuildSizeXYZ
+      }
     #set DART x and y rotation
     outDF$Xrot <- outDF$Yrot <- 0
     #set random rotation north +- 45 deg
