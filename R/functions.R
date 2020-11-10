@@ -119,8 +119,9 @@ createBuildingDistribution <- function(nBuildings,
   paramsList <- createParamsList(polygonsData = SP_shifted, 
                                  nBuildings = nBuildings, 
                                  lambda_p = lambda_p,
-                                 z_mean = z_mean,
-                                 z_sd = z_sd, 
+                                 z_mid = z_mid,
+                                 z_variability = z_variability,
+                                 height_distribution_normal = height_distribution_normal,
                                  DART_XorY_m = DART_XorY_m, 
                                  DARTbuildSizeXYZ = DARTbuildSizeXYZ, 
                                  XYoffset_factor = XYoffset_factor, 
@@ -138,8 +139,8 @@ createBuildingDistribution <- function(nBuildings,
 createParamsList <- function(polygonsData,
                              nBuildings, 
                              lambda_p,
-                             z_mean,
-                             z_sd, 
+                             z_mid,
+                             z_variability, 
                              DART_XorY_m, 
                              DARTbuildSizeXYZ, 
                              XYoffset_factor, 
@@ -147,13 +148,14 @@ createParamsList <- function(polygonsData,
                              seedVal, 
                              iters,
                              maxIters,
-                             domainExtent) {
+                             domainExtent,
+                            height_distribution_normal) {
   
   out <- list()
   out$nBuildings <- nBuildings
   out$lambda_p <- lambda_p
-  out$z_mean <- z_mean
-  out$z_sd <- z_sd
+  out$z_mid <- z_mid
+  out$z_variability <- z_variability
   out$DART_XorY_m <- DART_XorY_m
   out$DARTbuildSizeXYZ <- DARTbuildSizeXYZ
   out$XYoffset_factor <- XYoffset_factor
@@ -162,6 +164,7 @@ createParamsList <- function(polygonsData,
   out$iters <- iters
   out$maxIters <- maxIters
   out$domainExtent <- domainExtent
+  out$height_distribution_normal <- height_distribution_normal
   out$newPAI <- sum(area(polygonsData)) / (domainExtent["x", "max"] * domainExtent["y", "max"])
   return(out)
 }
